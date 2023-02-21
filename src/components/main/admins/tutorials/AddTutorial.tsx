@@ -14,6 +14,7 @@ const AddTutorialsComponent = (props: any) => {
     const addTutorialMode = props.addTutorialMode;
     const [topicInfo, setTopicInfo] = useState([] as any);
     const tutorialInfo = props.tutorialInfo;
+    const [topicId, setTopicId] = useState("");
 
     const [topics, setTopics] = useState([] as any);
     const [subTopics, setSubTopics] = useState([] as any);
@@ -23,17 +24,17 @@ const AddTutorialsComponent = (props: any) => {
     useEffect(() => {
         const fetchTopics = async () => {
             const response = await fetch(`https://capstone-final-adf33-default-rtdb.firebaseio.com/tutorials/${tutorialInfo.id}/topic.json`);
-            const responseSubTopic = await fetch(`https://capstone-final-adf33-default-rtdb.firebaseio.com/tutorials/${tutorialInfo.id}/topic/${topics.id}/subTopic.json`);
+            // const responseSubTopic = await fetch(`https://capstone-final-adf33-default-rtdb.firebaseio.com/tutorials/${tutorialInfo.id}/topic/${topicId}/subTopic.json`);
 
-            if (!response.ok || !responseSubTopic.ok) {
+            if (!response.ok) {
                 throw new Error('Something went wrong!!')
             }
 
             const responseData = await response.json();
-            const responseDataSubTopic = await responseSubTopic.json();
+            // const responseDataSubTopic = await responseSubTopic.json();
 
             const loadedTutorials = [];
-            const loadedSubTopics = [];
+            // const loadedSubTopics = [];
 
             for (const key in responseData) {
                 loadedTutorials.push({
@@ -44,16 +45,16 @@ const AddTutorialsComponent = (props: any) => {
                     subTopic: responseData[key].subTopic,
                 });
             }
-            for (const key in responseDataSubTopic) {
-                loadedSubTopics.push({
-                    id: key,
-                    title: responseData[key].title,
-                    description: responseData[key].description,
-                    example: responseData[key].example,
-                });
-            }
+            // for (const key in responseDataSubTopic) {
+            //     loadedSubTopics.push({
+            //         id: key,
+            //         title: responseData[key].title,
+            //         description: responseData[key].description,
+            //         example: responseData[key].example,
+            //     });
+            // }
             setTopics(loadedTutorials);
-            setSubTopics(loadedSubTopics);
+            // setSubTopics(loadedSubTopics);
             setIsLoading(false);
         }
         fetchTopics().catch((error) => {
@@ -61,63 +62,19 @@ const AddTutorialsComponent = (props: any) => {
             setHttpError(error.message)
         });
         console.log(tutorialInfo)
-    }, [topics.id, tutorialInfo]);
-
-    // const topicTitle = tutorialInfo.topic.map((topic: any) => topic.title);
-    const [topicTitles, setTopicTitles] = useState();
-    const topicAuthor = () => tutorialInfo.topic?.map((topic: any) => {
-        return (
-            `${topic.author}`
-        )
-    });
-    const topicCreatingDate = () => tutorialInfo.topic?.map((topic: any) => {
-        return (
-            `${topic.creatingDate}`
-        )
-    });
-    const subTopicTitle = () => tutorialInfo.topic?.map((topic: any) => {
-        const title = topic.subTopic.map((subTopic: any) => {
-            return (
-                `${subTopic.title}`
-            )
-        })
-        console.log(title)
-        return (
-            `${title}`
-        )
-    });
-    const subTopicDescription = () => tutorialInfo.topic?.map((topic: any) => {
-        const description = topic.subTopic.map((subTopic: any) => {
-            return (
-                `${subTopic.description}`
-            )
-        })
-        return (
-            `${description}`
-        )
-    });
-    const subTopicExample = () => tutorialInfo.topic?.map((topic: any) => {
-        const example = topic.subTopic.map((subTopic: any) => {
-            return (
-                `${subTopic.example}`
-            )
-        })
-        return (
-            `${example}`
-        )
-    });
+    }, [topicId, topics.id, tutorialInfo]);
 
     const initialValues = {
         id: Math.random(),
         title: addTutorialMode ? "" : tutorialInfo.title,
         author: addTutorialMode ? "" : tutorialInfo.author,
         creatingDate: addTutorialMode ? "" : tutorialInfo.creatingDate,
-        topicTitle: addTutorialMode ? "" : console.log(topicTitles),
-        topicAuthor: addTutorialMode ? "" : `${topicAuthor}`,
-        topicCreatingDate: addTutorialMode ? "" : `${topicCreatingDate}`,
-        subTitle: addTutorialMode ? "" : `${subTopicTitle}`,
-        subDescription: addTutorialMode ? "" : `${subTopicDescription}`,
-        subExample: addTutorialMode ? "" : `${subTopicExample}`,
+        topicTitle: addTutorialMode ? "" : "",
+        topicAuthor: addTutorialMode ? "" : "",
+        topicCreatingDate: addTutorialMode ? "" : "",
+        subTitle: addTutorialMode ? "" : "",
+        subDescription: addTutorialMode ? "" : "",
+        subExample: addTutorialMode ? "" : "",
     };
 
     function onSubmit(values: any) {
@@ -169,18 +126,22 @@ const AddTutorialsComponent = (props: any) => {
     }
 
     const deletingTopics = (topicId: any) => {
-        // fetch(`https://capstone-final-adf33-default-rtdb.firebaseio.com/tutorials/${tutorialInfo.id}/topic/${topicId}.json`, {
-        //     method: 'DELETE',
-        // }).then(response => {
-        setTopics((prevTopics: any) =>
-            prevTopics.filter((topic: any) => topic.id !== topicId)
-        )
-        // });
+        fetch(`https://capstone-final-adf33-default-rtdb.firebaseio.com/tutorials/${tutorialInfo.id}/topic/${topicId}.json`, {
+            method: 'DELETE',
+        }).then(response => {
+            setTopics((prevTopics: any) =>
+                prevTopics.filter((topic: any) => topic.id !== topicId)
+            )
+        });
     }
     const deletingSubTopics = (subTopicId: any) => {
-        setSubTopics((prevSubTopics: any) =>
-            prevSubTopics.filter((subTopic: any) => subTopic.id !== subTopicId)
-        )
+        fetch(`https://capstone-final-adf33-default-rtdb.firebaseio.com/tutorials/${tutorialInfo.id}/topic/${topicId}/subTopic.json`, {
+            method: 'DELETE',
+        }).then(response => {
+            setSubTopics((prevSubTopics: any) =>
+                prevSubTopics.filter((subTopic: any) => subTopic.id !== subTopicId)
+            )
+        });
     }
 
     async function addTopicHandler(topic: any) {
@@ -196,7 +157,7 @@ const AddTutorialsComponent = (props: any) => {
         setAddTopicsShow(false);
     }
     async function addSubHandler(subTopic: any) {
-        const response = await fetch(`https://capstone-final-adf33-default-rtdb.firebaseio.com/tutorials/${tutorialInfo.id}/topic/${topics.id}/subTopic.json`, {
+        const response = await fetch(`https://capstone-final-adf33-default-rtdb.firebaseio.com/tutorials/${tutorialInfo.id}/topic/${topicId}/subTopic.json`, {
             method: 'POST',
             body: JSON.stringify(subTopic),
             headers: {
@@ -247,9 +208,11 @@ const AddTutorialsComponent = (props: any) => {
     const [addSubTopicsShow, setAddSubTopicsShow] = useState(false);
     const [addMode, setAddMode] = useState(false);
     const cancel = () => {
+        // setTimeout(() => {
         setAddTopicsShow(false);
         setAddMode(false);
         setAddSubTopicsShow(false);
+        // }, 5000);
     }
 
     return (
@@ -273,8 +236,8 @@ const AddTutorialsComponent = (props: any) => {
                                                     <FormikField
                                                         name="title"
                                                         placeholder={"Title"}
-                                                        // defaultValue={addTutorialMode ? '' : tutorialInfo.title}
-                                                        value={values.title}
+                                                        defaultValue={addTutorialMode ? '' : tutorialInfo.title}
+                                                        // value={values.title}
                                                         type="text"
                                                         error={
                                                             ((errors.title as unknown) as boolean) &&
@@ -299,8 +262,8 @@ const AddTutorialsComponent = (props: any) => {
                                                     <FormikField
                                                         name="author"
                                                         placeholder={"Author"}
-                                                        // defaultValue={addTutorialMode ? '' : tutorialInfo.author}
-                                                        value={values.author}
+                                                        defaultValue={addTutorialMode ? '' : tutorialInfo.author}
+                                                        // value={values.author}
                                                         type="text"
                                                         error={
                                                             ((errors.author as unknown) as boolean) &&
@@ -325,8 +288,8 @@ const AddTutorialsComponent = (props: any) => {
                                                     <FormikField
                                                         name="creatingDate"
                                                         placeholder={"Creating Date"}
-                                                        // defaultValue={addTutorialMode ? '' : tutorialInfo.creatingDate}
-                                                        value={values.creatingDate}
+                                                        defaultValue={addTutorialMode ? '' : tutorialInfo.creatingDate}
+                                                        // value={values.creatingDate}
                                                         type="text"
                                                         error={
                                                             ((errors.creatingDate as unknown) as boolean) &&
@@ -491,11 +454,16 @@ const AddTutorialsComponent = (props: any) => {
                                             {!addTutorialMode && topics.length > 0 && !isLoading && !httpError &&
                                                 <Grid>
                                                     <Grid className={styles.create}>My Topics</Grid>
-                                                    <ol>
-                                                        {topics && topics.map((topic: any) => {
-                                                            setTopicTitles(topic.title)
+                                                    <Grid>
+                                                        {topics && topics.map((topic: any, i: any) => {
+                                                            // setTopicTitles(topic.title)
+                                                            setTopicId(topic.id)
+                                                            setSubTopics(topic.subTopic)
                                                             return (
-                                                                <li style={{ fontSize: "30px", marginBottom: '50px' }} key={topic.id}>
+                                                                <Grid style={{ fontSize: "30px", marginBottom: '50px' }} key={topic.id}>
+                                                                    <Grid>
+                                                                        <Grid className={styles.numero}>{`Topic #${i + 1}`}</Grid>
+                                                                    </Grid>
                                                                     <Grid container>
                                                                         <Grid item xs={0.5}></Grid>
                                                                         <Grid item xs={2.5}>
@@ -503,8 +471,8 @@ const AddTutorialsComponent = (props: any) => {
                                                                                 name="topicTitle"
                                                                                 placeholder={"Title"}
                                                                                 type="text"
-                                                                                // defaultValue={topic.title}
-                                                                                value={values.topicTitle}
+                                                                                defaultValue={addTutorialMode ? '' : topic.title}
+                                                                                // value={values.topicTitle}
                                                                                 error={
                                                                                     ((errors.topicTitle as unknown) as boolean) &&
                                                                                     ((touched.topicTitle as unknown) as boolean)
@@ -529,8 +497,8 @@ const AddTutorialsComponent = (props: any) => {
                                                                                 name="topicAuthor"
                                                                                 placeholder={"Author"}
                                                                                 type="text"
-                                                                                // defaultValue={topic.author}
-                                                                                value={values.topicAuthor}
+                                                                                defaultValue={addTutorialMode ? '' : topic.author}
+                                                                                // value={values.topicAuthor}
                                                                                 error={
                                                                                     ((errors.topicAuthor as unknown) as boolean) &&
                                                                                     ((touched.topicAuthor as unknown) as boolean)
@@ -555,8 +523,8 @@ const AddTutorialsComponent = (props: any) => {
                                                                                 name="topicCreatingDate"
                                                                                 placeholder={"Creating Date"}
                                                                                 type="text"
-                                                                                // defaultValue={topic.creatingDate}
-                                                                                value={values.topicCreatingDate}
+                                                                                defaultValue={addTutorialMode ? '' : topic.creatingDate}
+                                                                                // value={values.topicCreatingDate}
                                                                                 error={
                                                                                     ((errors.topicCreatingDate as unknown) as boolean) &&
                                                                                     ((touched.topicCreatingDate as unknown) as boolean)
@@ -596,9 +564,12 @@ const AddTutorialsComponent = (props: any) => {
                                                                                     className={styles.btnAddTutorial}>Add SubTopic</button>
                                                                             </Grid>
                                                                         </Grid>
-                                                                        <ul>
-                                                                            {topic.subTopic && topic.subTopic.map((subTopics: any) =>
-                                                                                <li className={styles.subLi} key={subTopics.id}>
+                                                                        <Grid>
+                                                                            {topic.subTopic && topic.subTopic.map((subTopics: any, i: any) =>
+                                                                                <Grid className={styles.subLi} key={subTopics.id}>
+                                                                                    <Grid>
+                                                                                        <Grid className={styles.numero}>{`Sub-Topic #${i + 1}`}</Grid>
+                                                                                    </Grid>
                                                                                     <Grid item container xs={12} className={styles.subGrid}>
                                                                                         <Grid item xs={12} container>
                                                                                             <Grid item xs={1.5}>
@@ -623,8 +594,8 @@ const AddTutorialsComponent = (props: any) => {
                                                                                                 placeholder={"Title"}
                                                                                                 // inputProps={{ style: inpWidth }}
                                                                                                 type="text"
-                                                                                                // defaultValue={subTopics.title}
-                                                                                                value={values.subTitle}
+                                                                                                defaultValue={addTutorialMode ? '' : subTopics.title}
+                                                                                                // value={values.subTitle}
                                                                                                 error={
                                                                                                     ((errors.subTitle as unknown) as boolean) &&
                                                                                                     ((touched.subTitle as unknown) as boolean)
@@ -649,8 +620,8 @@ const AddTutorialsComponent = (props: any) => {
                                                                                                 onChange={handleChange}
                                                                                                 onBlur={handleBlur}
                                                                                                 name="subDescription"
-                                                                                                // defaultValue={subTopics.description}
-                                                                                                value={values.subDescription}
+                                                                                                defaultValue={addTutorialMode ? '' : subTopics.description}
+                                                                                                // value={values.subDescription}
                                                                                                 className={styles.subTopicEdit} />
                                                                                             {((errors.subDescription as unknown) as boolean) &&
                                                                                                 ((touched.subDescription as unknown) as boolean) ? (
@@ -667,8 +638,8 @@ const AddTutorialsComponent = (props: any) => {
                                                                                                 onChange={handleChange}
                                                                                                 onBlur={handleBlur}
                                                                                                 name="subExample"
-                                                                                                // defaultValue={subTopics.example}
-                                                                                                value={values.subExample}
+                                                                                                defaultValue={addTutorialMode ? '' : subTopics.example}
+                                                                                                // value={values.subExample}
                                                                                                 className={styles.subTopicEdit} />
                                                                                             <ErrorMessage name="subExample" component="div" className="invalid-feedback" />
                                                                                         </Grid>
@@ -678,16 +649,25 @@ const AddTutorialsComponent = (props: any) => {
                                                                                             </button>
                                                                                         </Grid>
                                                                                     </Grid>
-                                                                                </li>
+                                                                                </Grid>
                                                                             )}
-                                                                        </ul>
+                                                                        </Grid>
                                                                     </Grid>
-                                                                </li>
+                                                                </Grid>
                                                             )
                                                         }
                                                         )}
-                                                    </ol>
+                                                    </Grid>
                                                     <Grid style={{ textAlign: 'center' }}>
+                                                        <button onClick={() => { setAddTopicsShow(true); setAddMode(true) }}
+                                                            className={styles.btnAddTutorial}>Add Topic</button>
+                                                    </Grid>
+                                                </Grid>
+                                            }
+                                            {!addTutorialMode && topics.length === 0 && !isLoading && !httpError &&
+                                                <Grid>
+                                                    <Grid style={{ textAlign: 'center', marginTop: '50px' }}>
+                                                        <Grid sx={{ color: 'red', marginBottom: '50px' }} className={styles.create}>No Topics Yet..</Grid>
                                                         <button onClick={() => { setAddTopicsShow(true); setAddMode(true) }}
                                                             className={styles.btnAddTutorial}>Add Topic</button>
                                                     </Grid>
@@ -705,63 +685,6 @@ const AddTutorialsComponent = (props: any) => {
                                 }}
                             </Formik>
                         </Grid>
-                        {/* {!addTutorialMode && topics.length > 0 && !isLoading && !httpError &&
-                            <Grid xs={12}>
-                                <table style={{ width: '100%' }}>
-                                    <thead>
-                                        <tr>
-                                            <th style={{ width: '30%' }} className={styles.thTable}>Title</th>
-                                            <th style={{ width: '30%' }} className={styles.thTable}>Author</th>
-                                            <th style={{ width: '30%' }} className={styles.thTable}>Creating Date</th>
-                                            <th style={{ width: '10%' }} className={styles.thTable}></th>
-                                        </tr>
-                                    </thead>
-                                    {topics && topics.map((topic: any) =>
-                                        <tbody key={topic.id}>
-                                            <tr style={{ textAlign: 'center' }}>
-                                                <td>{topic.title}</td>
-                                                <td>{topic.author}</td>
-                                                <td>{topic.creatingDate}</td>
-                                                <td style={{ whiteSpace: 'nowrap' }}>
-                                                    <button className={styles.btnSave} onClick={() => {
-                                                        setAddEditShow(true);
-                                                        setAddMode(false);
-                                                        setTopicInfo(topic);
-                                                        console.log(tutorialInfo)
-                                                    }}>Edit</button>
-                                                    <button className={styles.btnCancel} onClick={deletingTopics.bind(this, topic.id)}>
-                                                        Delete
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    )}
-                                </table>
-                                <Grid className={styles.btnAddTopic} xs={12}>
-                                    <button onClick={() => { setAddEditShow(true); setAddMode(true) }}>Add New Topic</button>
-                                </Grid>
-                            </Grid>
-                        }
-                        {!addTutorialMode && isLoading && !httpError &&
-                            <section className={styles.loading}>
-                                Loading...
-                            </section>
-                        }
-                        {!addTutorialMode && !isLoading && httpError &&
-                            <section className={styles.error}>
-                                {httpError}
-                            </section>
-                        }
-                        {!addTutorialMode && topics.length === 0 && !isLoading && !httpError &&
-                            <Grid>
-                                <section className={styles.noTutorials}>
-                                    No Topics Yet..
-                                </section>
-                                <Grid style={{ textAlign: 'center' }}>
-                                    <button onClick={() => { setAddEditShow(true); setAddMode(true) }} className={styles.btnAddTutorial}>Add Topic</button>
-                                </Grid>
-                            </Grid>
-                        } */}
                     </Grid>
                 </Grid>
             }
