@@ -8,8 +8,8 @@ import FormikField from "../../../general/Layouts/TextField/FormikField";
 import { useDispatch } from "react-redux";
 
 const AddEditSubComponent = (props: any) => {
-    const isAddMode = props.isAddMode;
-    const subTopicInfo = props.subTopicInfo;
+    // const isAddMode = props.isAddMode;
+    // const subTopicInfo = props.subTopicInfo;
 
     const initialValues = {
         title: '',
@@ -35,14 +35,14 @@ const AddEditSubComponent = (props: any) => {
         props.onAddSub(subTopic);
     }
 
-    function onEditSubmit(values: any) {
-        const subTopic = {
-            title: values.title,
-            description: values.description,
-            example: values.example,
-        }
-        props.onEditSub(subTopic);
-    }
+    // function onEditSubmit(values: any) {
+    //     const subTopic = {
+    //         title: values.title,
+    //         description: values.description,
+    //         example: values.example,
+    //     }
+    //     props.onEditSub(subTopic);
+    // }
 
     return (
         <Box>

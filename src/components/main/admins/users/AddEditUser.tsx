@@ -14,13 +14,13 @@ const AddEditUser = (props: any) => {
 
     const initialValues = {
         id: Math.random(),
-        firstName: "",
-        familyName: "",
-        email: "",
-        password: "",
-        confirmPassword: "",
-        age: "",
-        phoneNumber: "",
+        firstName: addUserMode ? "" : userInfo.firstName,
+        familyName: addUserMode ? "" : userInfo.familyName,
+        email: addUserMode ? "" : userInfo.email,
+        password: addUserMode ? "" : userInfo.password,
+        confirmPassword: addUserMode ? "" : userInfo.confirmPassword,
+        age: addUserMode ? "" : userInfo.age,
+        phoneNumber: addUserMode ? "" : userInfo.phoneNumber,
     };
     function onSubmit(values: any) {
         const user = {
@@ -276,7 +276,7 @@ const AddEditUser = (props: any) => {
                                             <LoadingButton
                                                 type="submit"
                                                 // loading={loading}
-                                                disabled={!dirty || !isValid}
+                                                // disabled={addUserMode && !dirty || !isValid}
                                                 sx={{ textTransform: 'capitalize', width: '200px', height: '55px', fontSize: '18px !important', fontWeight: 'normal' }}
                                                 variant="contained">
                                                 {addUserMode ? 'ADD' : 'UPDATE'}

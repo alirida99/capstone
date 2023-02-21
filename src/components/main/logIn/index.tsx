@@ -91,9 +91,12 @@ const LoginComponent: React.FC<LoginComponentProps> = () => {
         });
         try {
             if (email.includes(enteredUser.email) && password.includes(enteredUser.password)) {
-                await loginUsers
-                router.push('/home')
                 context.setSession(enteredUser.email)
+                await loginUsers
+                router.push({
+                    pathname: '/user/userHome',
+                    query: { email: enteredUser.email }
+                })
             } else {
                 setHttpError("Incorrect Email OR Password")
             }

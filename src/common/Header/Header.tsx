@@ -18,7 +18,7 @@ const Header = () => {
         <Box className={styles.header}>
             <Grid container>
                 <Grid item xs={2} style={{ height: '75px', cursor: 'pointer' }} onClick={() => { router.push('/') }} >
-                    <Image src='/myLogo.png' width={73} height={73} alt="logo" />
+                    <Image src='/myLogo.png' width={'73px'} height={'73px'} alt="logo" />
                 </Grid>
                 <Grid xs={7}></Grid>
                 <Grid xs={3} className={styles.buttons}>
