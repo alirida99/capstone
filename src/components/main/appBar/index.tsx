@@ -46,7 +46,7 @@ export default function AppBar({ isTutorials, isExercises }: OptionsProps) {
     return (
         <AppbarContainer>
             {/* < img style={{ width: 200, height: 60 }} src="/images/eboardlogo.jpg" /> */}
-            <Image src='/images/eboardlogo.jpg' width={'200px'} height={'60px'} alt="logo" />
+            <Image src='/images/eboardlogo.jpg' width={200} height={60} alt="logo" />
 
             <MyList type="row">
 

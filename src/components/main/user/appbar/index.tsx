@@ -18,14 +18,14 @@ function UserAppbar() { //update profile information form
 
     return (
         <>
-        <Container
+            <Container
                 maxWidth="xl"
                 sx={{
                     background: '#fff'
                 }}
             >
                 <AppbarContainer>
-                    <Image src='/images/eboardlogo.jpg' width={'200px'} height={'60px'} alt="logo" />
+                    <Image src='/images/eboardlogo.jpg' width={200} height={60} alt="logo" />
                     <MyList type='row'>
                         <ListItemButton onClick={() => { router.push('/user/userHome') }}> <ListItemIcon><HomeIcon /></ListItemIcon>Home </ListItemButton>
                         <ListItemButton
@@ -46,11 +46,11 @@ function UserAppbar() { //update profile information form
                     </MyList>
 
                 </AppbarContainer>
-            </Container>    
-    
-    </>
-    
-    
+            </Container>
+
+        </>
+
+
     );
 
 }
