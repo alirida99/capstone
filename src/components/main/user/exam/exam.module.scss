@@ -1,0 +1,229 @@
+
+                           
+
+.tutorialcontainer{
+    width: 22cm;
+    height: max-content;
+    background-color: rgba(0, 0, 0, 0.75);
+    border-radius: 30px;
+    margin: 40px auto ;
+    padding: 40px;
+    
+}
+.submit{
+    background-color: #d51b1b; 
+    border-radius: 8px;
+    color: white;
+    padding: 16px 32px;
+    font-size: 14px;
+    font-size: medium;
+    opacity: 0.6;
+    border: none;
+    cursor: pointer;
+   
+
+}
+.tutorialtitle{
+    text-align: center;
+    background-color: #288928; 
+    color: #fff;
+    font-weight: 400;
+    border-radius: 50px;
+    margin-top: 15px;
+    margin-bottom: 30px;
+}
+.takeexam{
+    background-color: #267326; 
+    border-radius: 8px;
+    color: white;
+    padding: 16px 32px;
+    font-size: 14px;
+    font-size: medium;
+    opacity: 0.6;
+    border: none;
+    cursor: pointer;
+    margin-left: 285px;
+    
+  }
+
+.takeexam:hover {opacity: 1}
+.submit:hover {opacity: 1}
+.tutorialtopic{
+    max-width: fit-content;
+    min-width: 200px;
+	height: 70px;
+    color: black;
+    font-weight: 500;
+    border-radius: 50% 0 50% 0;
+    border-bottom: 10px solid #247424;
+	background: whitesmoke;
+    text-align: center;
+
+}
+.fillblank{
+    background-color: white;
+    height: 30px;
+    width: 200px;
+    color: black;
+    font-weight: bold;
+    font-size: medium;
+    text-align: center;
+    padding: 3px 3px;
+    border: 4px solid #267326;
+    border-radius: 10px ;
+    margin-left: 8px;
+
+}
+.description{
+    
+    width:fit-content;
+    height: max-content;
+    color: #fff;
+}
+.examplecontainer{
+    background-color: rgba(0, 0, 0, 0.2);
+    width: 20cm;
+    height: max-content;
+    font-size: 20px;
+    border: 2px solid white;
+    border-radius: 30px;
+    padding: 15px;
+    color: #fff;
+    
+}
+.eg2{
+    max-width: 20cm;
+}
+.eg{
+    color: black;
+    font-size: large;
+    font-style: oblique;
+}
+.questionbox{
+    background-color: rgba(0, 0, 0, 0.2);
+    width: 20cm;
+    height: max-content;
+    font-size: 20px;
+    border: 2px solid white;
+    border-radius: 30px;
+    padding: 40px;
+    color: #fff;
+    text-align: start;
+    
+}
+.questionstatement{
+    color: #fff;
+    font-weight: 300;
+    font-style: oblique;
+    font-size: 25px;
+    border-radius: 50px;
+    width:fit-content;
+    
+}
+.center{
+    text-align: center;
+}
+
+.containergrid{
+    display: grid;
+    grid-template-columns: auto auto auto auto;
+    gap: 30px;
+    padding: 15px;
+
+}
+.buttonlist{
+  font-size: 20px;
+  text-align: center;
+  border-radius: 8px;
+  border: none;
+  color: white;
+  padding: 16px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  transition-duration: 0.4s;
+  cursor: pointer;
+  background-color: rgba(0, 0, 0, 0.1);
+  color:  white;
+  border: 2px solid #50ce50;
+  
+}
+.buttonlist:hover {
+    background-color: #267326;
+    color: white;
+  }
+  
+  // POP UP MESSAGE CSS
+
+.PopUp{
+    position: fixed;
+
+    left: 25%;
+    top: 30%;
+
+    width: 50%;
+    height: fit-content;
+    border: 1px solid #267326;
+    border-radius: 1em;
+    box-shadow: -2px 5px 5px#50ce50;
+    background-color: #FDFFFC;
+    
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    
+    color: #011627;
+}
+
+.popupx{
+    width: 3em;
+    height: 2em;
+    border: none;
+    border-top-right-radius: 1em;
+    border-bottom: 1px solid black;
+    border-left: 1px solid black;
+    background-color: #d51b1b; 
+    color: white;
+    opacity: 0.8;
+    border: none;
+    cursor: pointer;
+    font-size: large;
+    font-weight: bold;
+    align-self: flex-end;
+    justify-self: flex-start;
+}
+.popupx:hover {opacity: 1}
+.popupbutton:hover {opacity: 1}
+
+.pubuttoncontainer{
+    margin-bottom: 0.5em;
+}
+.popupbutton{
+    background-color: #267326; 
+    border-radius: 8px;
+    color: white;
+    padding: 16px 32px;
+    margin: 10px;
+    text-align: center;
+    font-size: 12px;
+    font-size: medium;
+    opacity: 0.8;
+    border: none;
+    cursor: pointer;
+}
+
+.pucontentcontainer{
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    
+}
+.pucontentcontainertut{
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+}

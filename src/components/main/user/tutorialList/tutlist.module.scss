@@ -1,0 +1,41 @@
+
+.containerlist{
+    width: 30cm;
+    height: 15cm;
+    background-color: rgba(0, 0, 0, 0.75);
+    border-radius: 30px;
+    margin: 50px auto ;
+    padding: 40px;
+    
+}
+
+.containergrid{
+    display: grid;
+    grid-template-columns: auto auto auto auto;
+    gap: 30px;
+    padding: 15px;
+
+}
+.buttonlist{
+    font-size: 20px;
+    text-align: center;
+    border-radius: 8px;
+    border: none;
+    color: white;
+    padding: 16px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    transition-duration: 0.4s;
+    cursor: pointer;
+    background-color: rgba(0, 0, 0, 0.1);
+    color:  white;
+    border: 2px solid #50ce50;
+    
+  }
+  .buttonlist:hover {
+      background-color: #267326;
+      color: white;
+    }
