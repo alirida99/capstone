@@ -2,7 +2,7 @@
 /* eslint-disable jsx-a11y/alt-text */
 import { Box, Grid, IconButton, InputAdornment, Link, TextField } from '@mui/material';
 import Image from 'next/image';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import * as Yup from 'yup';
 import { Form, Formik } from 'formik';
 import { LoadingButton } from '@mui/lab';
@@ -13,6 +13,7 @@ import styles from './login.module.scss';
 import FormikField from '../../general/Layouts/TextField/FormikField';
 import { useAuth } from '../../../../context/AuthContext';
 import { useRouter } from 'next/router';
+import AppContext from '../../AppContext/AppContext';
 
 interface FormValues {
     email: string;
@@ -23,6 +24,7 @@ interface LoginComponentProps { }
 const LoginComponent: React.FC<LoginComponentProps> = () => {
     const { user, login, loginUsers } = useAuth();
     const router = useRouter()
+    const context = useContext(AppContext)
 
     const [showPassword, setShowPassword] = useState(false);
     // const [data, setData] = useState({
@@ -91,6 +93,7 @@ const LoginComponent: React.FC<LoginComponentProps> = () => {
             if (email.includes(enteredUser.email) && password.includes(enteredUser.password)) {
                 await loginUsers
                 router.push('/home')
+                context.setSession(enteredUser.email)
             } else {
                 setHttpError("Incorrect Email OR Password")
             }
