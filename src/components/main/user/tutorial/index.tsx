@@ -54,7 +54,6 @@ function UserTutorial() {
           subTopic: responseTopicData[key].subTopic,
         });
       }
-      console.log(`https://capstone-final-adf33-default-rtdb.firebaseio.com/tutorials/${myTutorial.map((tutorial: any) => tutorial.id)}/topic.json`)
       setTutorials(loadedTutorials);
       setTopics(loadedTopics);
       setMyTutorial(thisTutorial);
@@ -79,14 +78,12 @@ function UserTutorial() {
       }}>
         <UserAppbar />
         {myTutorial?.map((tutorial: any) => {
-          console.log(topics)
           return (
             <div
               key={tutorial.id}
               className={styles.tutorialcontainer}>
               <h1 className={styles.tutorialtitle} >{tutorial.title}</h1>
               {topics.map((topic: any) => {
-                // console.log(topic)
                 return (
                   <div key={topic.id}>
                     <h1 className={styles.tutorialtopic}  > {topic.title} </h1>
@@ -109,7 +106,9 @@ function UserTutorial() {
               )}
               <br /><br />
               <button onClick={() => setPopUp(true)} className={styles.takeexam}> Take Exam </button> {/**Pop up box : Are you sure yu want to start this exam? */}
-              {popUp && <PopUp setPopUp={setPopUp} tutorialInfo={myTutorial} />}
+              {popUp && <PopUp setPopUp={() => setPopUp(false)} tutorialTitle={myTutorial.map((myT: any) => {
+                return (myT.title)
+              })} />}
             </div>
           )
         })
@@ -122,15 +121,16 @@ function UserTutorial() {
 }
 export default UserTutorial;
 
-const PopUp = (props: { setPopUp: any; tutorialInfo: any }) => {
+const PopUp = (props: any) => {
   // function that takes boolean as param to conditionally display popup
-  const { setPopUp } = props.setPopUp;
-  const tutorialInfo = props.tutorialInfo;
+  const setPopUp = props.setPopUp;
+  const tutorialTitle = props.tutorialTitle;
+  const router = useRouter();
 
   return (
     <div className={styles.PopUp} >
       {/* x close window */}
-      <button className={styles.popupx} onClick={() => setPopUp(false)} >X</button>
+      <button className={styles.popupx} onClick={setPopUp} >X</button>
       <div className={styles.pucontentcontainertut}>
 
         <h1>Are you sure you want to start the exam?</h1>
@@ -140,7 +140,9 @@ const PopUp = (props: { setPopUp: any; tutorialInfo: any }) => {
         <button className={styles.popupbutton} onClick={() => {
           router.push({
             pathname: '/user/userExam',
-            query: tutorialInfo,
+            query: {
+              tutorialTitle: tutorialTitle,
+            },
           })
         }}> Start exam </button>
       </div>
