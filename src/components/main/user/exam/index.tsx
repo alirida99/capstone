@@ -10,8 +10,10 @@ import {
 } from 'formik';
 import Footer from '../../footer';
 import UserAppbar from '../appbar';
-import { FormControlLabel, Grid, Radio, RadioGroup } from '@mui/material';
+import { FormControlLabel, Grid, Radio, RadioGroup, TextField } from '@mui/material';
 import FormikField from '@/components/general/Layouts/TextField/FormikField';
+import ExamTimer from '../timer';
+import DragAndDrop from './dragAndDrop';
 /** Exam List + Exam Page */
 
 function UsersExam() {
@@ -23,11 +25,21 @@ function UsersExam() {
   const [myExam, setMyExam] = useState([] as any);
   const [isLoading, setIsLoading] = useState(true);
   const [httpError, setHttpError] = useState();
-  const [grades, setGrades] = useState()
-  const [finalGrade, setFinalGrade] = useState()
+  const [grades, setGrades] = useState(0);
+  const [finalGrade, setFinalGrade] = useState(0);
+  const [thisEmail, setThisEmail] = useState([] as any);
+  const [users, setUsers] = useState([] as any);
+  const [myUser, setMyUser] = useState([] as any);
+  const [myGrades, setMyGrades] = useState([] as any);
+  const [optionsValues, setOptionsValues] = useState([] as any)
+  const [fitbValues, setFITBValues] = useState([] as any)
 
   const examId = router.query.examId;
   const listMode = router.query.listMode;
+
+  const thisUser = users.filter((user: any) => {
+    return user.email === `${thisEmail.map((email: any) => email.userEmail)}`;
+  });
 
   const thisExam = exams.filter((exam: any) => {
     return `${exam.type}`.toLowerCase() === `${tutorialTitle}`.toLowerCase();
@@ -35,21 +47,37 @@ function UsersExam() {
   const listExam = exams.filter((exam: any) => {
     return `${exam.id}` === `${examId}`;
   });
+  const grade = {
+    examTitle: `${myExam.map((exam: any) => exam.type)}`,
+    gradePercent: Math.floor((grades / finalGrade) * 100)
+  }
+  const ifPercentGrade = myGrades.filter((thisGrade: any) => {
+    return thisGrade.examTitle === grade.examTitle
+  })
 
   useEffect(() => {
     const fetchExams = async () => {
       const response = await fetch('https://capstone-final-adf33-default-rtdb.firebaseio.com/exams.json');
       const responseQues = await fetch(`https://capstone-final-adf33-default-rtdb.firebaseio.com/exams/${myExam.map((exam: any) => exam.id)}/questions.json`);
+      const responseUsers = await fetch('https://capstone-final-adf33-default-rtdb.firebaseio.com/users.json');
+      const responseUser = await fetch('https://capstone-final-adf33-default-rtdb.firebaseio.com/currentUser.json');
+      const responseGrade = await fetch(`https://capstone-final-adf33-default-rtdb.firebaseio.com/users/${myUser.map((user: any) => user.id)}/grades.json`);
 
-      if (!response.ok || !responseQues.ok) {
+      if (!response.ok || !responseQues.ok || !responseUser.ok || !responseUsers.ok || !responseGrade.ok) {
         throw new Error('Something went wrong!!')
       }
 
       const responseData = await response.json();
       const responseDataQues = await responseQues.json();
+      const responseUserData = await responseUser.json();
+      const responseUsersData = await responseUsers.json();
+      const responseGradesData = await responseGrade.json();
 
       const loadedExams = [];
       const loadedQuestions = [];
+      const loadedCurrentUser = [];
+      const loadedAllUsers = [];
+      const loadedGrades = [];
 
       for (const key in responseData) {
         loadedExams.push({
@@ -71,16 +99,61 @@ function UsersExam() {
           type: responseDataQues[key].type,
         });
       }
+      for (const key in responseUsersData) {
+        loadedAllUsers.push({
+          id: key,
+          firstName: responseUsersData[key].firstName,
+          familyName: responseUsersData[key].familyName,
+          email: responseUsersData[key].email,
+          phoneNumber: responseUsersData[key].phoneNumber,
+          age: responseUsersData[key].age,
+          password: responseUsersData[key].password,
+          grades: responseUsersData[key].grades,
+        });
+      }
+      for (const key in responseUserData) {
+        loadedCurrentUser.push({
+          id: key,
+          userEmail: responseUserData[key].userEmail,
+        });
+      }
+      for (const key in responseGradesData) {
+        loadedGrades.push({
+          id: key,
+          examTitle: responseGradesData[key].examTitle,
+          gradePercent: responseGradesData[key].gradePercent,
+        });
+      }
+
+      setMyGrades(loadedGrades)
+      setThisEmail(loadedCurrentUser)
       setExams(loadedExams);
+      setUsers(loadedAllUsers);
       setQuestions(loadedQuestions);
       setMyExam(!listMode ? thisExam : listExam)
+      setMyUser(thisUser)
       setIsLoading(false);
     }
     fetchExams().catch((error) => {
       setIsLoading(false);
       setHttpError(error.message)
     });
-  }, [listExam, listMode, myExam, thisExam]);
+    var result = questions.filter(function (o1: any) {
+      // filter out (!) items in result2
+      return optionsValues.some(function (o2: any) {
+        return o1.id === o2.id && o1.trueAnswer === o2.value;          // assumes unique id
+      });
+    });
+    var result2 = questions.filter(function (o1: any) {
+      // filter out (!) items in result2
+      return fitbValues.some(function (o2: any) {
+        return o1.id === o2.id && o1.trueAnswer === o2.value;          // assumes unique id
+      });
+    });
+    setGrades(result.reduce((a: any, v: any) => a = a + parseInt(v.grade, 10), 0) + result2.reduce((a: any, v: any) => a = a + parseInt(v.grade, 10), 0))
+    setFinalGrade(questions.reduce((a: any, v: any) => a = a + parseInt(v.grade, 10), 0))
+    console.log(fitbValues)
+  }, [fitbValues, listExam, listMode, myExam, myUser, optionsValues, questions, thisExam, thisUser]);
 
   const [time, setTime] = useState(0);
 
@@ -94,19 +167,41 @@ function UsersExam() {
         } else return time - 1;
       });
     }, 1000);
-  }, []);
+  }, [myUser]);
 
-  const [optionsValues, setOptionsValues] = useState([] as any)
-  const onSubmit = (values: any) => {
-    var result = questions.filter(function (o1: any) {
-      // filter out (!) items in result2
-      return optionsValues.some(function (o2: any) {
-        return o1.id === o2.id && o1.trueAnswer === o2.value;          // assumes unique id
-      });
+  async function addGradeToUser(grade: any) {
+    const response = await fetch(`https://capstone-final-adf33-default-rtdb.firebaseio.com/users/${myUser.map((user: any) => user.id)}/grades.json`, {
+      method: 'POST',
+      body: JSON.stringify(grade),
+      headers: {
+        'Content-Type': 'application/json'
+      }
     });
-    if (result) {
-      setGrades(result.reduce((a: any, v: any) => a = a + parseInt(v.grade, 10), 0))
-      setFinalGrade(questions.reduce((a: any, v: any) => a = a + parseInt(v.grade, 10), 0))
+    const data = await response.json();
+  }
+  async function editGradeUser(grade: any) {
+    const response = await fetch(`https://capstone-final-adf33-default-rtdb.firebaseio.com/users/${myUser.map((user: any) => user.id)}/grades/${ifPercentGrade.map((grade: any) => grade.id)}.json`, {
+      method: 'PATCH',
+      body: JSON.stringify(grade),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+    const data = await response.json();
+  }
+
+  const onSubmit = (values: any) => {
+    // if (result) {
+    const ifGrade = myGrades.map((grade: any) => grade.examTitle)
+    if (!ifGrade.includes(grade.examTitle)) {
+      addGradeToUser(grade)
+    } else {
+      if (ifPercentGrade.map((per: any) => per.gradePercent) >= grade.gradePercent) {
+        console.log("Done!")
+      } else {
+        editGradeUser(grade)
+      }
+      // }
     }
   }
 
@@ -118,6 +213,7 @@ function UsersExam() {
         backgroundRepeat: 'no-repeat',
         backgroundAttachment: 'fixed',
         backgroundPosition: 'center',
+        filter: popUp ? 'blur(4px)' : 'none',
       }}>
         <UserAppbar />
         <div className={styles.center}>
@@ -128,9 +224,6 @@ function UsersExam() {
                 fillIn: '',
               }}
               onSubmit={onSubmit}
-            // onSubmit={(values, actions) => {
-            //   console.log({ values, actions });
-            // }}
             >
               {({ errors, touched, isSubmitting, values, setFieldValue, handleBlur, handleChange }) => {
                 return (
@@ -142,13 +235,17 @@ function UsersExam() {
                           <h1 className={styles.tutorialtitle}> {exam.type} </h1>
                           {/* <Timer /> */}
                           <Grid className={styles.timer}>
-                            {`${Math.floor(time / 60)}`.padStart(2, `${0}`)}:
-                            {`${time % 60}`.padStart(2, `${0}`)}
+                            {/* {`${Math.floor(time / 60)}`.padStart(2, `${0}`)}:
+                            {`${time % 60}`.padStart(2, `${0}`)} */}
+                            <ExamTimer time={exam.time * 60} />
                           </Grid>
                           {/**MCQ Questions */}
                           {questions.map((question: any) => {
                             const specificOption = optionsValues.find(
                               (option: any) => option.id === question.id
+                            );
+                            const specificFITB = fitbValues.find(
+                              (fitb: any) => fitb.id === question.id
                             );
                             return (
                               <div key={question.id}>
@@ -171,7 +268,7 @@ function UsersExam() {
                                       >
                                         {question.options?.map((option: any) => {
                                           return (
-                                            <FormControlLabel key={option} value={option} control={<Radio />} label={option} />
+                                            <FormControlLabel disabled={popUp} key={option} value={option} control={<Radio />} label={option} />
                                           )
                                         })}
                                       </RadioGroup>
@@ -211,7 +308,28 @@ function UsersExam() {
                                       </Grid>
                                       <Grid item xs={0.2}></Grid>
                                       <Grid item xs={5.4}>
-                                        <FormikField
+                                        <TextField
+                                          id="standard-basic"
+                                          // label="Standard"
+                                          onChange={handleChange}
+                                          onBlur={(e: any) => {
+                                            if (!specificFITB) {
+                                              setFITBValues((current: any) => [...current, { id: question.id, value: e.target.value }])
+                                            } else {
+                                              specificFITB.value = e.target.value
+                                            }
+                                          }}
+                                          disabled={popUp}
+                                          sx={{
+                                            '& .css-1x51dt5-MuiInputBase-input-MuiInput-input': {
+                                              color: 'white !important',
+                                              textAlign: 'center',
+                                            },
+                                          }}
+                                          autoComplete='off'
+                                          className={styles.FITB}
+                                          variant="standard" />
+                                        {/* <FormikField
                                           name="fillIn"
                                           placeholder={"Fill In The Blank!"}
                                           // defaultValue={addExamMode ? '' : tutorialInfo.noq}
@@ -246,7 +364,7 @@ function UsersExam() {
                                               borderBottom: '1px solid green'
                                             },
                                           }}
-                                        />
+                                        /> */}
                                       </Grid>
                                       <Grid item xs={0.2}></Grid>
                                       <Grid item>
@@ -263,19 +381,17 @@ function UsersExam() {
                         </div>
                       )
                     })}
-
+                    {/* <DragAndDrop /> */}
                     <br /><br />
-
-                    <button type='submit' onClick={() => setPopUp(true)} className={styles.submit} > Submit </button> {/** when pressed popup box of grade + view grades button*/}
+                    <button disabled={popUp} type='submit' onClick={() => setPopUp(true)} className={styles.submit} > Submit </button> {/** when pressed popup box of grade + view grades button*/}
                   </Form>
                 )
               }}
             </Formik>
           </div>
-          {popUp && <PopUp setPopUp={() => setPopUp(false)} grades={grades} finalGrade={finalGrade} />}
-          <Footer />
         </div></div>
-
+      {popUp && <PopUp setPopUp={() => setPopUp(false)} grades={grades} finalGrade={finalGrade} />}
+      <Footer />
     </>
   );
 
@@ -300,7 +416,7 @@ const PopUp = (props: any) => {
     || percentage < 60 && 'You must study harder!'
 
   return (
-    <div className={styles.PopUp} >
+    <div className={styles.PopUp} style={{ filter: 'none !important' }} >
       <div className={styles.pucontentcontainer}>
         <h1>Result:</h1>
         <h1> {props.grades} of {props.finalGrade}</h1> {/**correct answers/total questions */}
@@ -310,7 +426,7 @@ const PopUp = (props: any) => {
       {/* button controls */}
       <div className={styles.pubuttoncontainer} >
         <button className={styles.popupbutton} onClick={() => { router.push('/user/userGrades') }}> View All Grades </button>
-        <button className={styles.popupbutton} onClick={() => { router.push('/user/userExamList') }}>Back to exams</button>
+        <button className={styles.popupbutton} onClick={() => { router.push('/user/userHome') }}>Go Home</button>
       </div>
     </div>
   );

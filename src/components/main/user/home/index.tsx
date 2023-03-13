@@ -10,27 +10,29 @@ function UserHomeComponent() {
   const router = useRouter()
   const [users, setUsers] = useState([] as any);
   const [user, setUser] = useState([] as any);
+  const [thisEmail, setThisEmail] = useState([] as any);
   const [isLoading, setIsLoading] = useState(true);
   const [httpError, setHttpError] = useState();
   const context = useContext(AppContext)
 
-  const email = context.session
-
   const thisUser = users.filter((user: any) => {
-    return user.email === email;
+    return user.email === `${thisEmail.map((email: any) => email.userEmail)}`;
   });
 
   useEffect(() => {
     const fetchUsers = async () => {
       const response = await fetch('https://capstone-final-adf33-default-rtdb.firebaseio.com/users.json');
+      const responseUser = await fetch('https://capstone-final-adf33-default-rtdb.firebaseio.com/currentUser.json');
 
-      if (!response.ok) {
+      if (!response.ok || !responseUser.ok) {
         throw new Error('Something went wrong!!')
       }
 
       const responseData = await response.json();
+      const responseUserData = await responseUser.json();
 
       const loadedUsers = [];
+      const loadedCurrentUser = [];
 
       for (const key in responseData) {
         loadedUsers.push({
@@ -43,7 +45,13 @@ function UserHomeComponent() {
           password: responseData[key].password,
         });
       }
-
+      for (const key in responseUserData) {
+        loadedCurrentUser.push({
+          id: key,
+          userEmail: responseUserData[key].userEmail,
+        });
+      }
+      setThisEmail(loadedCurrentUser)
       setUsers(loadedUsers);
       setUser(thisUser)
       setIsLoading(false);
@@ -52,7 +60,9 @@ function UserHomeComponent() {
       setIsLoading(false);
       setHttpError(error.message)
     });
-  }, [thisUser]);
+    console.log("-------------------")
+    console.log(thisEmail)
+  }, [thisEmail, thisUser]);
 
   return (
 
@@ -67,7 +77,7 @@ function UserHomeComponent() {
         height: '749px'
       }}>
         <UserAppbar />
-        <p className={styles.welcome} >Welcome,</p>
+        <p className={styles.welcome} >Welcome{isLoading ? '...' : ','}</p>
         {user.map((user: any) => {
           return (
             <p key={user} className={styles.homename} >{user.firstName}</p>

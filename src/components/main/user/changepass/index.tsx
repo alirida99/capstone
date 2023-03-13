@@ -28,11 +28,12 @@ function UserChangepass() { //change password form
   const context = useContext(AppContext);
   const [successOpen, setSuccessOpen] = React.useState(false);
   const [errorOpen, setErrorOpen] = React.useState(false);
+  const [thisEmail, setThisEmail] = useState([] as any);
 
   const email = context.session;
 
   const thisUser = users.filter((user: any) => {
-    return user.email === email;
+    return user.email === `${thisEmail.map((email: any) => email.userEmail)}`;
   });
 
   const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
@@ -69,14 +70,17 @@ function UserChangepass() { //change password form
   useEffect(() => {
     const fetchUsers = async () => {
       const response = await fetch('https://capstone-final-adf33-default-rtdb.firebaseio.com/users.json');
+      const responseUser = await fetch('https://capstone-final-adf33-default-rtdb.firebaseio.com/currentUser.json');
 
-      if (!response.ok) {
+      if (!response.ok || !responseUser.ok) {
         throw new Error('Something went wrong!!')
       }
 
       const responseData = await response.json();
+      const responseUserData = await responseUser.json();
 
       const loadedUsers = [];
+      const loadedCurrentUser = [];
 
       for (const key in responseData) {
         loadedUsers.push({
@@ -89,8 +93,14 @@ function UserChangepass() { //change password form
           password: responseData[key].password,
         });
       }
-
+      for (const key in responseUserData) {
+        loadedCurrentUser.push({
+          id: key,
+          userEmail: responseUserData[key].userEmail,
+        });
+      }
       setUsers(loadedUsers);
+      setThisEmail(loadedCurrentUser)
       setMyUser(thisUser)
       setIsLoading(false);
     }
