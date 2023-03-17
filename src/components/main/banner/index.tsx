@@ -17,7 +17,7 @@ export default function Banner() {
                         <Typography variant="h6"> Not sure where to begin?
                             {/* <a href="/signUp">Sign Up</a> and */}
                             <span className={styles.link}>
-                                <Link href="/signUp">Sign Up </Link>
+                                <Link href="/signUp"> Sign Up </Link>
                             </span>
                             and
                             {/* <ListItemButton href="/signUp" sx={{ color: 'blue' }}>

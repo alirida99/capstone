@@ -80,7 +80,7 @@ export default function Dnd({
   taskId,
   children,
   wrongAnswers = [],
-  // dragAndDrop,
+  dragAndDrop,
   // question,
   //   title = "Drag 'n' Drop",
   //   successMessage = "Nicely done!",
@@ -248,7 +248,7 @@ export default function Dnd({
               if (solutions) {
                 const { items: blankItems, isCorrect: isBlankCorrect } =
                   items[id];
-                // dragAndDrop(blankItems);
+                dragAndDrop(blankItems);
                 return (
                   <>
                     {" "}
@@ -316,3 +316,15 @@ Dnd.propTypes = {
   //   failureMessage: PropTypes.string,
   items: PropTypes.object,
 };
+
+{
+  /* <Dnd
+  taskId={question.id}
+  wrongAnswers={question.options}
+  dragAndDrop={dragAndDrop}
+>
+  {question.sentence1}
+  <Blank solution={question.trueAnswer} />
+  {question.sentence2}
+</Dnd>; */
+}
