@@ -1,6 +1,8 @@
 import styles from './exam.module.scss';
 import React, { useEffect, useState } from 'react';
 import router, { useRouter } from 'next/router';
+import { Flex, Heading } from "@chakra-ui/react";
+import Dnd, { Blank } from "./DnD";
 
 
 import {
@@ -13,7 +15,8 @@ import UserAppbar from '../appbar';
 import { FormControlLabel, Grid, Radio, RadioGroup, TextField } from '@mui/material';
 import FormikField from '@/components/general/Layouts/TextField/FormikField';
 import ExamTimer from '../timer';
-import DragAndDrop from './dragAndDrop';
+// import DragAndDrop from './dragAndDrop';
+import { Example } from './dnd';
 /** Exam List + Exam Page */
 
 function UsersExam() {
@@ -33,6 +36,13 @@ function UsersExam() {
   const [myGrades, setMyGrades] = useState([] as any);
   const [optionsValues, setOptionsValues] = useState([] as any)
   const [fitbValues, setFITBValues] = useState([] as any)
+  const [dndValues, setDNDValues] = useState([] as any)
+  const [dadValues, setDADValues] = useState([] as any)
+
+  const dragAndDrop = (dndValues: any) => {
+    setDNDValues((current: any) => [...current, dndValues])
+    // setDADValues((current: any) => [...current, { id: id, value: `${dndValues.map((dnd: any) => dnd.dndValues)}` }])
+  }
 
   const examId = router.query.examId;
   const listMode = router.query.listMode;
@@ -152,8 +162,7 @@ function UsersExam() {
     });
     setGrades(result.reduce((a: any, v: any) => a = a + parseInt(v.grade, 10), 0) + result2.reduce((a: any, v: any) => a = a + parseInt(v.grade, 10), 0))
     setFinalGrade(questions.reduce((a: any, v: any) => a = a + parseInt(v.grade, 10), 0))
-    console.log(fitbValues)
-  }, [fitbValues, listExam, listMode, myExam, myUser, optionsValues, questions, thisExam, thisUser]);
+  }, [dndValues, fitbValues, listExam, listMode, myExam, myUser, optionsValues, questions, thisExam, thisUser]);
 
   const [time, setTime] = useState(0);
 
@@ -192,9 +201,12 @@ function UsersExam() {
 
   const onSubmit = (values: any) => {
     // if (result) {
+    console.log("---------------------")
+    console.log(dndValues)
     const ifGrade = myGrades.map((grade: any) => grade.examTitle)
     if (!ifGrade.includes(grade.examTitle)) {
       addGradeToUser(grade)
+      console.log("---------------------------")
     } else {
       if (ifPercentGrade.map((per: any) => per.gradePercent) >= grade.gradePercent) {
         console.log("Done!")
@@ -281,21 +293,26 @@ function UsersExam() {
 
                                 {question.type === 'DAD' &&
                                   <div className={styles.questionbox}>
-
-                                    <div className={styles.questionstatement}>
-
-                                      <span>Before drag/drop sentence </span>
-
-
-                                      <span>After drag/drop sentence </span>
-
-
-                                    </div>
+                                    {/* <Flex direction="column" alignItems="center" px="6"> */}
+                                    <Dnd
+                                      taskId={question.id}
+                                      // title="Fill in the blank"
+                                      wrongAnswers={question.options}
+                                    // dragAndDrop={dragAndDrop}
+                                    // question={question}
+                                    >
+                                      {question.sentence1}<Blank solution={question.trueAnswer} />{question.sentence2}
+                                      {/* <Blank solution={["two", "multiple", "Answer 1"]} /> correct answers.{" "}
+                                      <Blank solution={["Answer 1", "Answer 2"]} /> and{" "}
+                                      <Blank solution={["Answer 1", "Answer 2"]} /> are both correct and the
+                                      order doesn't matter. */}
+                                    </Dnd>
+                                    {/* </Flex> */}
                                   </div>}
-                                {question.type === 'DAD' && <div>
-
-                                  <br /><br />
-                                </div>
+                                {question.type === 'DAD' &&
+                                  <div>
+                                    <br /><br />
+                                  </div>
                                 }
 
 
@@ -381,9 +398,8 @@ function UsersExam() {
                         </div>
                       )
                     })}
-                    {/* <DragAndDrop /> */}
                     <br /><br />
-                    <button disabled={popUp} type='submit' onClick={() => setPopUp(true)} className={styles.submit} > Submit </button> {/** when pressed popup box of grade + view grades button*/}
+                    <button type='submit' onClick={() => setPopUp(true)} className={styles.submit} > Submit </button> {/** when pressed popup box of grade + view grades button*/}
                   </Form>
                 )
               }}
