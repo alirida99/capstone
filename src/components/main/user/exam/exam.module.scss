@@ -159,10 +159,9 @@
 
 .PopUp{
     position: fixed;
-
     left: 25%;
     top: 30%;
-
+text-align: center;
     width: 50%;
     height: fit-content;
     border: 1px solid #267326;
@@ -197,6 +196,9 @@
 }
 .popupx:hover {opacity: 1}
 .popupbutton:hover {opacity: 1}
+.popupbutton {
+    width: 200px;
+}
 
 .pubuttoncontainer{
     margin-bottom: 0.5em;
@@ -226,4 +228,26 @@
     justify-content: center;
     align-items: center;
     display: flex;
+}
+
+.timer{
+    color: #fff;
+    margin-top: 15px;
+    margin-bottom: 30px;
+    font-size: 25px;
+    font-weight: 400;
+    border-radius: 50px;
+    margin-top: 15px;
+    margin-bottom: 30px;
+    margin-left: 550px;
+}
+.FITB {
+    width: 100% !important;
+}
+
+.drop {
+    color: red;
+    background-color: blue;
+    width: 200px;
+    height: 200px;
 }

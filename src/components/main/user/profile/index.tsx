@@ -14,21 +14,22 @@ import { Grid } from '@mui/material';
 import * as Yup from 'yup';
 import Alert from '../alert';
 import Snackbar from '@mui/material/Snackbar';
+import HourglassTopIcon from '@mui/icons-material/HourglassTop';
 
 function UserProfileComponent() { //update profile information form 
   const router = useRouter()
 
   const [users, setUsers] = useState([] as any);
+  // const [user, setUser] = useState([] as any);
   const [myUser, setMyUser] = useState([] as any);
   const [isLoading, setIsLoading] = useState(true);
   const [httpError, setHttpError] = useState();
   const context = useContext(AppContext);
   const [open, setOpen] = React.useState(false);
-
-  const email = context.session;
+  const [thisEmail, setThisEmail] = useState([] as any);
 
   const thisUser = users.filter((user: any) => {
-    return user.email === email;
+    return user.email === `${thisEmail.map((email: any) => email.userEmail)}`;
   });
 
   const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
@@ -41,14 +42,17 @@ function UserProfileComponent() { //update profile information form
   useEffect(() => {
     const fetchUsers = async () => {
       const response = await fetch('https://capstone-final-adf33-default-rtdb.firebaseio.com/users.json');
+      const responseUser = await fetch('https://capstone-final-adf33-default-rtdb.firebaseio.com/currentUser.json');
 
-      if (!response.ok) {
+      if (!response.ok || !responseUser.ok) {
         throw new Error('Something went wrong!!')
       }
 
       const responseData = await response.json();
+      const responseUserData = await responseUser.json();
 
       const loadedUsers = [];
+      const loadedCurrentUser = [];
 
       for (const key in responseData) {
         loadedUsers.push({
@@ -59,9 +63,17 @@ function UserProfileComponent() { //update profile information form
           phoneNumber: responseData[key].phoneNumber,
           age: responseData[key].age,
           password: responseData[key].password,
+          grades: responseData[key].grades,
+        });
+      }
+      for (const key in responseUserData) {
+        loadedCurrentUser.push({
+          id: key,
+          userEmail: responseUserData[key].userEmail,
         });
       }
 
+      setThisEmail(loadedCurrentUser)
       setUsers(loadedUsers);
       setMyUser(thisUser)
       setIsLoading(false);
@@ -70,7 +82,7 @@ function UserProfileComponent() { //update profile information form
       setIsLoading(false);
       setHttpError(error.message)
     });
-  }, [thisUser]);
+  }, [thisEmail, thisUser]);
 
   const SignupSchema = Yup.object().shape({
     firstName: Yup.string()
@@ -162,43 +174,7 @@ function UserProfileComponent() { //update profile information form
               return (
                 <Form>
                   <h2 className={styles.title} >Personal Information</h2>
-
-                  {/* <label htmlFor="name" className={styles.labels} >
-
-                    <span>Full name
-                      <Field className={styles.textfields} name="name" />
-                      <FormikField
-                        name="name"
-                        placeholder={"Name"}
-                        className={styles.labels}
-                        defaultValue={addExamMode ? '' : tutorialInfo.noq}
-                        value={values.name}
-                        type="number"
-                        error={
-                          ((errors.name as unknown) as boolean) &&
-                          ((touched.name as unknown) as boolean)
-                        }
-                        sx={{
-                          marginTop: "20px",
-                          color: "white",
-                          fontSize: "17px",
-                          fontWeight: 'bold',
-                          borderColor: 'green',
-                          "& .MuiOutlinedInput-root": {
-                            height: { xs: "44px", lg: "64px" },
-                            padding: {
-                              xs: "10px 0 10px 0",
-                              lg: "20px 0 20px 0",
-                            },
-                            borderRadius: { xs: "8px", lg: "10px" },
-                            color: { xs: "#3b3b3b" },
-                            fontSize: { xs: "16px", lg: "18px" },
-                          },
-                        }}
-                      />
-                    </span>
-                  </label> */}
-                  {myUser.map((user: any) => {
+                  {!httpError && !isLoading && myUser.map((user: any) => {
                     return (
                       <Grid container key={user.id}>
                         <Grid item xs={12} container paddingBottom={0} sx={{ width: '100%', height: '100px' }}>
@@ -457,6 +433,11 @@ function UserProfileComponent() { //update profile information form
                       </Grid>
                     )
                   })}
+                  <div style={{ textAlign: 'center' }}>
+                    {!httpError && isLoading &&
+                      <HourglassTopIcon sx={{ width: '50px', height: '50px', color: 'green', marginBottom: '50px' }} />
+                    }
+                  </div>
                   <button className={styles.update} type="submit">Update Information</button>
                   <Snackbar open={open} autoHideDuration={3000} onClose={handleClose}>
                     <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>

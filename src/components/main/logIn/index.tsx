@@ -36,6 +36,18 @@ const LoginComponent: React.FC<LoginComponentProps> = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [httpError, setHttpError] = useState("");
 
+    async function currentUser(user: any) {
+        const response = await fetch('https://capstone-final-adf33-default-rtdb.firebaseio.com/currentUser.json', {
+            method: 'POST',
+            body: JSON.stringify(user),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        const data = await response.json();
+        console.log(data);
+    }
+
     useEffect(() => {
         const fetchUsers = async () => {
             const response = await fetch(`https://capstone-final-adf33-default-rtdb.firebaseio.com/users.json`);
@@ -93,6 +105,10 @@ const LoginComponent: React.FC<LoginComponentProps> = () => {
             if (email.includes(enteredUser.email) && password.includes(enteredUser.password)) {
                 context.setSession(enteredUser.email)
                 await loginUsers
+                const user = {
+                    userEmail: enteredUser.email
+                }
+                currentUser(user);
                 router.push({
                     pathname: '/user/userHome',
                     query: { email: enteredUser.email }
