@@ -1,4 +1,4 @@
-import { Box, Grid } from "@mui/material";
+import { Box, Grid, TextField } from "@mui/material";
 import React, { useEffect, useState } from "react";
 
 import styles from './tutorials.module.scss';
@@ -9,6 +9,8 @@ import { Formik, Field, Form, ErrorMessage } from 'formik';
 import Footer from "../../footer";
 import FormikField from "../../../general/Layouts/TextField/FormikField";
 import AddEditSubComponent from "./AddEditSub";
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import ViewAllSubs from "./ViewAllSubs";
 
 const AddTutorialsComponent = (props: any) => {
     const addTutorialMode = props.addTutorialMode;
@@ -20,21 +22,20 @@ const AddTutorialsComponent = (props: any) => {
     const [subTopics, setSubTopics] = useState([] as any);
     const [isLoading, setIsLoading] = useState(true);
     const [httpError, setHttpError] = useState();
+    const [viewSubtopics, setViewSubtopics] = useState(false);
+    const [myTopics, setMyTopics] = useState([] as any)
 
     useEffect(() => {
         const fetchTopics = async () => {
             const response = await fetch(`https://capstone-final-adf33-default-rtdb.firebaseio.com/tutorials/${tutorialInfo.id}/topic.json`);
-            // const responseSubTopic = await fetch(`https://capstone-final-adf33-default-rtdb.firebaseio.com/tutorials/${tutorialInfo.id}/topic/${topicId}/subTopic.json`);
 
             if (!response.ok) {
                 throw new Error('Something went wrong!!')
             }
 
             const responseData = await response.json();
-            // const responseDataSubTopic = await responseSubTopic.json();
 
             const loadedTutorials = [];
-            // const loadedSubTopics = [];
 
             for (const key in responseData) {
                 loadedTutorials.push({
@@ -45,16 +46,8 @@ const AddTutorialsComponent = (props: any) => {
                     subTopic: responseData[key].subTopic,
                 });
             }
-            // for (const key in responseDataSubTopic) {
-            //     loadedSubTopics.push({
-            //         id: key,
-            //         title: responseData[key].title,
-            //         description: responseData[key].description,
-            //         example: responseData[key].example,
-            //     });
-            // }
+
             setTopics(loadedTutorials);
-            // setSubTopics(loadedSubTopics);
             setIsLoading(false);
         }
         fetchTopics().catch((error) => {
@@ -89,9 +82,9 @@ const AddTutorialsComponent = (props: any) => {
                     creatingDate: values.topicCreatingDate,
                     subTopic: [
                         {
-                            title: values.subTitle,
-                            description: values.subDescription,
-                            example: values.subExample,
+                            title: topics.map((topic: any) => topic.title),
+                            description: topics.map((topic: any) => topic.description),
+                            example: topics.map((topic: any) => topic.example),
                         }
                     ]
                 }
@@ -106,20 +99,7 @@ const AddTutorialsComponent = (props: any) => {
             title: values.title,
             author: values.author,
             creatingDate: values.creatingDate,
-            topic: [
-                {
-                    title: values.topicTitle,
-                    author: values.topicAuthor,
-                    creatingDate: values.topicCreatingDate,
-                    subTopic: [
-                        {
-                            title: values.subTitle,
-                            description: values.subDescription,
-                            example: values.subExample,
-                        }
-                    ]
-                }
-            ],
+            topic: myTopics,
         }
         console.log(tutorial);
         props.onEdit(tutorial);
@@ -131,15 +111,6 @@ const AddTutorialsComponent = (props: any) => {
         }).then(response => {
             setTopics((prevTopics: any) =>
                 prevTopics.filter((topic: any) => topic.id !== topicId)
-            )
-        });
-    }
-    const deletingSubTopics = (subTopicId: any) => {
-        fetch(`https://capstone-final-adf33-default-rtdb.firebaseio.com/tutorials/${tutorialInfo.id}/topic/${topicId}/subTopic.json`, {
-            method: 'DELETE',
-        }).then(response => {
-            setSubTopics((prevSubTopics: any) =>
-                prevSubTopics.filter((subTopic: any) => subTopic.id !== subTopicId)
             )
         });
     }
@@ -156,19 +127,7 @@ const AddTutorialsComponent = (props: any) => {
         console.log(data);
         setAddTopicsShow(false);
     }
-    async function addSubHandler(subTopic: any) {
-        const response = await fetch(`https://capstone-final-adf33-default-rtdb.firebaseio.com/tutorials/${tutorialInfo.id}/topic/${topicId}/subTopic.json`, {
-            method: 'POST',
-            body: JSON.stringify(subTopic),
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
-        const data = await response.json();
-        console.log(data);
-        setAddTopicsShow(false);
-        setAddSubTopicsShow(false);
-    }
+
     async function editTopicHandler(topic: any) {
         const response = await fetch(`https://capstone-final-adf33-default-rtdb.firebaseio.com/tutorials/${tutorialInfo.id}/topic.json`, {
             method: 'POST',
@@ -196,12 +155,6 @@ const AddTutorialsComponent = (props: any) => {
             .required('Author is required!'),
         topicCreatingDate: Yup.string()
             .required('Title is required!'),
-        subTitle: Yup.string()
-            .required('Title is required!'),
-        subDescription: Yup.string()
-            .required('Description is required!'),
-        subExample: Yup.string()
-            .required('Example is required!'),
     })
 
     const [addTopicsShow, setAddTopicsShow] = useState(false);
@@ -212,13 +165,14 @@ const AddTutorialsComponent = (props: any) => {
         setAddTopicsShow(false);
         setAddMode(false);
         setAddSubTopicsShow(false);
+        setViewSubtopics(false)
         // }, 5000);
     }
 
     return (
         <Box>
             {/* <AdminsHomeComponent /> */}
-            {!addTopicsShow && !addSubTopicsShow &&
+            {!addTopicsShow && !addSubTopicsShow && !viewSubtopics &&
                 <Grid container>
                     <Grid container>
                         <Grid className={styles.create} xs={12}>{addTutorialMode ? 'Add New Tutorial' : 'Edit Tutorial'}</Grid>
@@ -456,9 +410,11 @@ const AddTutorialsComponent = (props: any) => {
                                                     <Grid className={styles.create}>My Topics</Grid>
                                                     <Grid>
                                                         {topics && topics.map((topic: any, i: any) => {
-                                                            // setTopicTitles(topic.title)
                                                             setTopicId(topic.id)
                                                             setSubTopics(topic.subTopic)
+                                                            const specificTopic = myTopics.find(
+                                                                (topics: any) => topics.id === topic.id
+                                                            );
                                                             return (
                                                                 <Grid style={{ fontSize: "30px", marginBottom: '50px' }} key={topic.id}>
                                                                     <Grid>
@@ -467,7 +423,41 @@ const AddTutorialsComponent = (props: any) => {
                                                                     <Grid container>
                                                                         <Grid item xs={0.5}></Grid>
                                                                         <Grid item xs={2.5}>
-                                                                            <FormikField
+                                                                            <TextField
+                                                                                id="topicTitle"
+                                                                                name="topicTitle"
+                                                                                placeholder={"Title"}
+                                                                                defaultValue={addTutorialMode ? '' : topic.title}
+                                                                                onChange={handleChange}
+                                                                                onBlur={(e: any) => {
+                                                                                    if (!specificTopic) {
+                                                                                        setMyTopics((current: any) => [...current, { id: topic.id, title: e.target.value, author: '', creatingDate: '', subTopic: topic.subTopic }])
+                                                                                    } else {
+                                                                                        specificTopic.title = e.target.value
+                                                                                    }
+                                                                                }}
+                                                                                sx={{
+                                                                                    "& .MuiOutlinedInput-root": {
+                                                                                        height: { xs: "44px", lg: "64px" },
+                                                                                        padding: {
+                                                                                            xs: "10px 0 10px 0",
+                                                                                            lg: "20px 0 20px 0",
+                                                                                        },
+                                                                                        borderRadius: { xs: "8px", lg: "10px" },
+                                                                                        color: { xs: "#3b3b3b" },
+                                                                                        fontSize: { xs: "16px", lg: "18px" },
+                                                                                    },
+                                                                                }}
+                                                                                variant="outlined" />
+                                                                            {((errors.topicTitle as unknown) as boolean) &&
+                                                                                ((touched.topicTitle as unknown) as boolean) ? (
+                                                                                <ErrorMessage name={"topicTitle"} component="dev">
+                                                                                    {(msg) => (
+                                                                                        <div className={styles.errorStyle}>{msg}</div>
+                                                                                    )}
+                                                                                </ErrorMessage>
+                                                                            ) : null}
+                                                                            {/* <FormikField
                                                                                 name="topicTitle"
                                                                                 placeholder={"Title"}
                                                                                 type="text"
@@ -489,11 +479,11 @@ const AddTutorialsComponent = (props: any) => {
                                                                                         fontSize: { xs: "16px", lg: "18px" },
                                                                                     },
                                                                                 }}
-                                                                            />
+                                                                            /> */}
                                                                         </Grid>
                                                                         <Grid item xs={1}></Grid>
                                                                         <Grid item xs={2.5}>
-                                                                            <FormikField
+                                                                            {/* <FormikField
                                                                                 name="topicAuthor"
                                                                                 placeholder={"Author"}
                                                                                 type="text"
@@ -515,11 +505,45 @@ const AddTutorialsComponent = (props: any) => {
                                                                                         fontSize: { xs: "16px", lg: "18px" },
                                                                                     },
                                                                                 }}
-                                                                            />
+                                                                            /> */}
+                                                                            <TextField
+                                                                                id="topicAuthor"
+                                                                                name="topicAuthor"
+                                                                                placeholder={"Author"}
+                                                                                defaultValue={addTutorialMode ? '' : topic.author}
+                                                                                onChange={handleChange}
+                                                                                onBlur={(e: any) => {
+                                                                                    if (!specificTopic) {
+                                                                                        setMyTopics((current: any) => [...current, { id: topic.id, title: '', author: e.target.value, creatingDate: '', subTopic: topic.subTopic }])
+                                                                                    } else {
+                                                                                        specificTopic.author = e.target.value
+                                                                                    }
+                                                                                }}
+                                                                                sx={{
+                                                                                    "& .MuiOutlinedInput-root": {
+                                                                                        height: { xs: "44px", lg: "64px" },
+                                                                                        padding: {
+                                                                                            xs: "10px 0 10px 0",
+                                                                                            lg: "20px 0 20px 0",
+                                                                                        },
+                                                                                        borderRadius: { xs: "8px", lg: "10px" },
+                                                                                        color: { xs: "#3b3b3b" },
+                                                                                        fontSize: { xs: "16px", lg: "18px" },
+                                                                                    },
+                                                                                }}
+                                                                                variant="outlined" />
+                                                                            {((errors.topicAuthor as unknown) as boolean) &&
+                                                                                ((touched.topicAuthor as unknown) as boolean) ? (
+                                                                                <ErrorMessage name={"topicAuthor"} component="dev">
+                                                                                    {(msg) => (
+                                                                                        <div className={styles.errorStyle}>{msg}</div>
+                                                                                    )}
+                                                                                </ErrorMessage>
+                                                                            ) : null}
                                                                         </Grid>
                                                                         <Grid item xs={1}></Grid>
                                                                         <Grid item xs={2.5}>
-                                                                            <FormikField
+                                                                            {/* <FormikField
                                                                                 name="topicCreatingDate"
                                                                                 placeholder={"Creating Date"}
                                                                                 type="text"
@@ -541,7 +565,42 @@ const AddTutorialsComponent = (props: any) => {
                                                                                         fontSize: { xs: "16px", lg: "18px" },
                                                                                     },
                                                                                 }}
-                                                                            />
+                                                                            /> */}
+                                                                            <TextField
+                                                                                id="topicCreatingDate"
+                                                                                name="topicCreatingDate"
+                                                                                placeholder={"Creating Date"}
+                                                                                defaultValue={addTutorialMode ? '' : topic.creatingDate}
+                                                                                onChange={handleChange}
+                                                                                onBlur={(e: any) => {
+                                                                                    if (!specificTopic) {
+                                                                                        setMyTopics((current: any) => [...current, { id: topic.id, title: '', author: '', creatingDate: e.target.value, subTopic: topic.subTopic }])
+                                                                                    } else {
+                                                                                        specificTopic.creatingDate = e.target.value
+                                                                                    }
+                                                                                    console.log(myTopics)
+                                                                                }}
+                                                                                sx={{
+                                                                                    "& .MuiOutlinedInput-root": {
+                                                                                        height: { xs: "44px", lg: "64px" },
+                                                                                        padding: {
+                                                                                            xs: "10px 0 10px 0",
+                                                                                            lg: "20px 0 20px 0",
+                                                                                        },
+                                                                                        borderRadius: { xs: "8px", lg: "10px" },
+                                                                                        color: { xs: "#3b3b3b" },
+                                                                                        fontSize: { xs: "16px", lg: "18px" },
+                                                                                    },
+                                                                                }}
+                                                                                variant="outlined" />
+                                                                            {((errors.topicCreatingDate as unknown) as boolean) &&
+                                                                                ((touched.topicCreatingDate as unknown) as boolean) ? (
+                                                                                <ErrorMessage name={"topicCreatingDate"} component="dev">
+                                                                                    {(msg) => (
+                                                                                        <div className={styles.errorStyle}>{msg}</div>
+                                                                                    )}
+                                                                                </ErrorMessage>
+                                                                            ) : null}
                                                                         </Grid>
                                                                         <Grid item xs={0.5}></Grid>
                                                                         <Grid item xs={1.5}>
@@ -550,107 +609,18 @@ const AddTutorialsComponent = (props: any) => {
                                                                             </button>
                                                                         </Grid>
                                                                     </Grid>
-                                                                    <Grid>
-                                                                        <Grid className={styles.create}>
-                                                                            <Grid>
-                                                                                Sub-Topics
-                                                                            </Grid>
-                                                                            <Grid style={{ textAlign: 'center' }}>
-                                                                                <button onClick={() => {
-                                                                                    setAddTopicsShow(false);
-                                                                                    setAddSubTopicsShow(true);
-                                                                                    setAddMode(true);
+                                                                    <Grid container>
+                                                                        <Grid item xs={9}></Grid>
+                                                                        <Grid item xs={3}>
+                                                                            <button
+                                                                                type="button"
+                                                                                className={styles.viewAll}
+                                                                                onClick={() => {
+                                                                                    setViewSubtopics(true);
+                                                                                    setAddTopicsShow(false)
+                                                                                    setTopicInfo(topic)
                                                                                 }}
-                                                                                    className={styles.btnAddTutorial}>Add SubTopic</button>
-                                                                            </Grid>
-                                                                        </Grid>
-                                                                        <Grid>
-                                                                            {topic.subTopic && topic.subTopic.map((subTopics: any, i: any) =>
-                                                                                <Grid className={styles.subLi} key={subTopics.id}>
-                                                                                    <Grid>
-                                                                                        <Grid className={styles.numero}>{`Sub-Topic #${i + 1}`}</Grid>
-                                                                                    </Grid>
-                                                                                    <Grid item container xs={12} className={styles.subGrid}>
-                                                                                        <Grid item xs={12} container>
-                                                                                            <Grid item xs={1.5}>
-                                                                                                <label className={styles.TutorialTitleLetters}>Title</label>
-                                                                                            </Grid>
-                                                                                            <Grid item xs={0.4}></Grid>
-                                                                                            <Grid item xs={4.1}>
-                                                                                                <label className={styles.TutorialTitleLetters}>Description</label>
-                                                                                            </Grid>
-                                                                                            <Grid item xs={0.4}></Grid>
-                                                                                            <Grid item xs={4.1}>
-                                                                                                <label className={styles.TutorialTitleLetters}>Example</label>
-                                                                                            </Grid>
-                                                                                            <Grid item xs={1.5}></Grid>
-                                                                                        </Grid>
-                                                                                    </Grid>
-                                                                                    <Grid item container xs={12} className={styles.subGrid}>
-                                                                                        <Grid item xs={1.5} sx={{ textAlign: 'left' }}>
-                                                                                            <FormikField
-                                                                                                name="subTitle"
-                                                                                                // label={'title'}
-                                                                                                placeholder={"Title"}
-                                                                                                // inputProps={{ style: inpWidth }}
-                                                                                                type="text"
-                                                                                                defaultValue={addTutorialMode ? '' : subTopics.title}
-                                                                                                // value={values.subTitle}
-                                                                                                error={
-                                                                                                    ((errors.subTitle as unknown) as boolean) &&
-                                                                                                    ((touched.subTitle as unknown) as boolean)
-                                                                                                }
-                                                                                                sx={{
-                                                                                                    "& .MuiOutlinedInput-root": {
-                                                                                                        height: { xs: "44px", lg: "64px" },
-                                                                                                        padding: {
-                                                                                                            xs: "10px 0 10px 0",
-                                                                                                            lg: "20px 0 20px 0",
-                                                                                                        },
-                                                                                                        borderRadius: { xs: "8px", lg: "10px" },
-                                                                                                        color: { xs: "#3b3b3b" },
-                                                                                                        fontSize: { xs: "16px", lg: "18px" },
-                                                                                                    },
-                                                                                                }}
-                                                                                            />
-                                                                                        </Grid>
-                                                                                        <Grid item xs={0.4}></Grid>
-                                                                                        <Grid item xs={4.1} sx={{ textAlign: 'left' }}>
-                                                                                            <textarea
-                                                                                                onChange={handleChange}
-                                                                                                onBlur={handleBlur}
-                                                                                                name="subDescription"
-                                                                                                defaultValue={addTutorialMode ? '' : subTopics.description}
-                                                                                                // value={values.subDescription}
-                                                                                                className={styles.subTopicEdit} />
-                                                                                            {((errors.subDescription as unknown) as boolean) &&
-                                                                                                ((touched.subDescription as unknown) as boolean) ? (
-                                                                                                <ErrorMessage name={"subDescription"} component="dev">
-                                                                                                    {(msg) => (
-                                                                                                        <div className={styles.errorStyle}>{msg}</div>
-                                                                                                    )}
-                                                                                                </ErrorMessage>
-                                                                                            ) : null}
-                                                                                        </Grid>
-                                                                                        <Grid item xs={0.4}></Grid>
-                                                                                        <Grid item xs={4.1} sx={{ textAlign: 'left' }}>
-                                                                                            <textarea
-                                                                                                onChange={handleChange}
-                                                                                                onBlur={handleBlur}
-                                                                                                name="subExample"
-                                                                                                defaultValue={addTutorialMode ? '' : subTopics.example}
-                                                                                                // value={values.subExample}
-                                                                                                className={styles.subTopicEdit} />
-                                                                                            <ErrorMessage name="subExample" component="div" className="invalid-feedback" />
-                                                                                        </Grid>
-                                                                                        <Grid item xs={1.5}>
-                                                                                            <button className={styles.btnCancel} onClick={deletingSubTopics.bind(this, subTopics.id)}>
-                                                                                                Delete
-                                                                                            </button>
-                                                                                        </Grid>
-                                                                                    </Grid>
-                                                                                </Grid>
-                                                                            )}
+                                                                            >View All Subtopics<ArrowForwardIcon /></button>
                                                                         </Grid>
                                                                     </Grid>
                                                                 </Grid>
@@ -700,14 +670,13 @@ const AddTutorialsComponent = (props: any) => {
                         cancel={cancel} />
                 </Grid>
             }
-            {!addTopicsShow && addSubTopicsShow &&
-                <AddEditSubComponent
-                    onAddSub={addSubHandler}
-                    // onEditSub={editSubHandler}
+            {!addTopicsShow && viewSubtopics &&
+                <ViewAllSubs
+                    topicInfo={topicInfo}
+                    cancel={cancel}
+                    tutorialInfo={tutorialInfo}
                     tutorialList={props.tutorialList}
-                    // isAddMode={isAddSubMode}
-                    // subTopicInfo={subTopicInfo}
-                    cancel={cancel} />
+                />
             }
             <Footer />
         </Box>
