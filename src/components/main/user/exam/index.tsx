@@ -12,11 +12,10 @@ import {
 } from 'formik';
 import Footer from '../../footer';
 import UserAppbar from '../appbar';
-import { FormControlLabel, Grid, Radio, RadioGroup, TextField } from '@mui/material';
+import { FormControl, FormControlLabel, Grid, InputLabel, MenuItem, Radio, RadioGroup, Select, TextField } from '@mui/material';
 import FormikField from '@/components/general/Layouts/TextField/FormikField';
 import ExamTimer from '../timer';
 // import DragAndDrop from './dragAndDrop';
-import { Example } from './dnd';
 /** Exam List + Exam Page */
 
 function UsersExam() {
@@ -37,12 +36,6 @@ function UsersExam() {
   const [optionsValues, setOptionsValues] = useState([] as any)
   const [fitbValues, setFITBValues] = useState([] as any)
   const [dndValues, setDNDValues] = useState([] as any)
-  const [dadValues, setDADValues] = useState([] as any)
-
-  const dragAndDrop = (dndValues: any) => {
-    setDNDValues((current: any) => [...current, dndValues])
-    // setDADValues((current: any) => [...current, { id: id, value: `${dndValues.map((dnd: any) => dnd.dndValues)}` }])
-  }
 
   const examId = router.query.examId;
   const listMode = router.query.listMode;
@@ -160,7 +153,13 @@ function UsersExam() {
         return o1.id === o2.id && o1.trueAnswer === o2.value;          // assumes unique id
       });
     });
-    setGrades(result.reduce((a: any, v: any) => a = a + parseInt(v.grade, 10), 0) + result2.reduce((a: any, v: any) => a = a + parseInt(v.grade, 10), 0))
+    var result3 = questions.filter(function (o1: any) {
+      // filter out (!) items in result2
+      return dndValues.some(function (o2: any) {
+        return o1.id === o2.id && o1.trueAnswer === o2.value;          // assumes unique id
+      });
+    });
+    setGrades(result.reduce((a: any, v: any) => a = a + parseInt(v.grade, 10), 0) + result2.reduce((a: any, v: any) => a = a + parseInt(v.grade, 10), 0) + result3.reduce((a: any, v: any) => a = a + parseInt(v.grade, 10), 0))
     setFinalGrade(questions.reduce((a: any, v: any) => a = a + parseInt(v.grade, 10), 0))
   }, [dndValues, fitbValues, listExam, listMode, myExam, myUser, optionsValues, questions, thisExam, thisUser]);
 
@@ -201,12 +200,9 @@ function UsersExam() {
 
   const onSubmit = (values: any) => {
     // if (result) {
-    console.log("---------------------")
-    console.log(dndValues)
     const ifGrade = myGrades.map((grade: any) => grade.examTitle)
     if (!ifGrade.includes(grade.examTitle)) {
       addGradeToUser(grade)
-      console.log("---------------------------")
     } else {
       if (ifPercentGrade.map((per: any) => per.gradePercent) >= grade.gradePercent) {
         console.log("Done!")
@@ -234,6 +230,7 @@ function UsersExam() {
               initialValues={{
                 options: '',
                 fillIn: '',
+                dnd: '',
               }}
               onSubmit={onSubmit}
             >
@@ -258,6 +255,9 @@ function UsersExam() {
                             );
                             const specificFITB = fitbValues.find(
                               (fitb: any) => fitb.id === question.id
+                            );
+                            const specificDND = dndValues.find(
+                              (dnd: any) => dnd.id === question.id
                             );
                             return (
                               <div key={question.id}>
@@ -293,21 +293,41 @@ function UsersExam() {
 
                                 {question.type === 'DAD' &&
                                   <div className={styles.questionbox}>
-                                    {/* <Flex direction="column" alignItems="center" px="6"> */}
-                                    <Dnd
-                                      taskId={question.id}
-                                      // title="Fill in the blank"
-                                      wrongAnswers={question.options}
-                                    // dragAndDrop={dragAndDrop}
-                                    // question={question}
-                                    >
-                                      {question.sentence1}<Blank solution={question.trueAnswer} />{question.sentence2}
-                                      {/* <Blank solution={["two", "multiple", "Answer 1"]} /> correct answers.{" "}
-                                      <Blank solution={["Answer 1", "Answer 2"]} /> and{" "}
-                                      <Blank solution={["Answer 1", "Answer 2"]} /> are both correct and the
-                                      order doesn't matter. */}
-                                    </Dnd>
-                                    {/* </Flex> */}
+                                    <FormControl fullWidth>
+                                      <Grid container>
+                                        <Grid item>{question.sentence1}</Grid>
+                                        <Grid item xs={0.2}></Grid>
+                                        <Grid item xs={4}>
+                                          <Select
+                                            // labelId="demo-simple-select-label"
+                                            name='dnd'
+                                            onChange={handleChange}
+                                            onBlur={(e: any) => {
+                                              if (!specificDND) {
+                                                setDNDValues((current: any) => [...current, { id: question.id, value: e.target.value }])
+                                              } else {
+                                                specificDND.value = e.target.value
+                                              }
+                                              console.log(dndValues)
+                                            }}
+                                            sx={{ width: '100%', height: '40px', color: 'white', border: '1px solid white' }}
+                                          >
+                                            {question.options?.map((option: any) => {
+                                              return (
+                                                <MenuItem
+                                                  disabled={popUp}
+                                                  key={option}
+                                                  value={option}
+                                                >{option}</MenuItem>
+                                              )
+                                            })
+                                            }
+                                          </Select>
+                                        </Grid>
+                                        <Grid item xs={0.2}></Grid>
+                                        <Grid item>{question.sentence2}</Grid>
+                                      </Grid>
+                                    </FormControl>
                                   </div>}
                                 {question.type === 'DAD' &&
                                   <div>
