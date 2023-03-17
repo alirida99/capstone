@@ -231,7 +231,7 @@ const LoginComponent: React.FC<LoginComponentProps> = () => {
                                             </Grid>
                                             <Grid container mt={5}>
                                                 <Grid item xs>
-                                                    <Link href="#" variant="body2" style={{ fontSize: '18px' }}>
+                                                    <Link onClick={() => { router.push('/user/ForgotPass') }} variant="body2" style={{ fontSize: '18px' }}>
                                                         Forgot password?
                                                     </Link>
                                                 </Grid>
