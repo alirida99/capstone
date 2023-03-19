@@ -7,6 +7,27 @@
     padding: 40px;
     
 }
+.back{
+    border-radius: 20px;
+    margin-right: 500px ;
+    color:#fff;
+    background-color: rgba(0, 0, 0, 0.01);
+    border: 2px solid #fff;
+}
+.changepass{
+    background-color: #d51b1b; 
+    border-radius: 8px;
+    color: white;
+    padding: 16px 32px;
+    text-align: center;
+    font-size: 14px;
+    font-size: medium;
+    opacity: 0.6;
+    border: none;
+    cursor: pointer;
+    margin-left: 500px;
+    text-align: right;
+}
 .tutorialtitle{
     text-align: center;
     background-color: #288928; 
@@ -27,7 +48,6 @@
     border: none;
     cursor: pointer;
     margin-left: 285px;
-    
   }
 
 .takeexam:hover {opacity: 1}
@@ -42,18 +62,17 @@
     border-bottom: 10px solid #247424;
 	background: whitesmoke;
     text-align: center;
-
+    cursor: pointer;
+    margin: 30px auto 30px auto;
+    padding: 10px ;
 }
 .subtopic{
-    
-    color: white;
+    color: green;
     font-weight: 500;
     font-style: oblique;
     font-size: 40px;
-
 }
 .description{
-    
     width:fit-content;
     height: max-content;
     color: #fff;
@@ -67,10 +86,10 @@
     border-radius: 30px;
     padding: 15px;
     color: #fff;
-    
 }
 .eg2{
     max-width: 20cm;
+    color: red;
 }
 .eg{
     color: black;
@@ -153,4 +172,10 @@
     justify-content: center;
     align-items: center;
     display: flex;
+}
+.error {
+    color: red;
+    font-size: 25px;
+    text-align: center;
+    width: 100%;
 }

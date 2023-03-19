@@ -7,6 +7,10 @@ import styles from './tutorials.module.scss';
 import AddEditSubComponent from "./AddEditSub";
 import FormikField from "../../../general/Layouts/TextField/FormikField";
 
+import DatePicker from "react-datepicker";
+
+import "react-datepicker/dist/react-datepicker.css";
+
 const AddEditTutorialsComponent = (props: any) => {
     const isAddMode = props.isAddMode;
     const tutorialInfo = props.tutorialInfo;
@@ -25,6 +29,10 @@ const AddEditTutorialsComponent = (props: any) => {
     const [subTopics, setSubTopics] = useState([] as any);
     const [isLoading, setIsLoading] = useState(true);
     const [httpError, setHttpError] = useState();
+
+    const current = new Date();
+    const [startDate, setStartDate] = useState(new Date());
+    const date = `${current.getDate()}/${current.getMonth() + 1}/${current.getFullYear()}`;
 
     useEffect(() => {
         const fetchTutorials = async () => {
@@ -69,8 +77,8 @@ const AddEditTutorialsComponent = (props: any) => {
             .required('Title is required!'),
         author: Yup.string()
             .required('Author is required!'),
-        creatingDate: Yup.string()
-            .required('Title is required!'),
+        // creatingDate: Yup.string()
+        //     .required('Title is required!'),
         subTitle: Yup.string()
             .required('Title is required!'),
         subDescription: Yup.string()
@@ -83,7 +91,7 @@ const AddEditTutorialsComponent = (props: any) => {
         const topic = {
             title: values.title,
             author: values.author,
-            creatingDate: values.creatingDate,
+            creatingDate: date,
             subTopic: [
                 {
                     title: values.subTitle,
@@ -100,7 +108,7 @@ const AddEditTutorialsComponent = (props: any) => {
         const topic = {
             title: values.title,
             author: values.author,
-            creatingDate: values.creatingDate,
+            creatingDate: date,
             subTopic: topicInfo.subTopic,
         }
         console.log(topic)
@@ -209,28 +217,12 @@ const AddEditTutorialsComponent = (props: any) => {
                                             </Grid>
                                             <Grid item xs={1}></Grid>
                                             <Grid item xs={3}>
-                                                <FormikField
-                                                    name="creatingDate"
-                                                    placeholder={"Creating Date"}
-                                                    defaultValue={isAddMode ? '' : topicInfo.creatingDate}
-                                                    type="text"
-                                                    error={
-                                                        ((errors.creatingDate as unknown) as boolean) &&
-                                                        ((touched.creatingDate as unknown) as boolean)
-                                                    }
-                                                    sx={{
-                                                        "& .MuiOutlinedInput-root": {
-                                                            height: { xs: "44px", lg: "64px" },
-                                                            padding: {
-                                                                xs: "10px 0 10px 0",
-                                                                lg: "20px 0 20px 0",
-                                                            },
-                                                            borderRadius: { xs: "8px", lg: "10px" },
-                                                            color: { xs: "#3b3b3b" },
-                                                            fontSize: { xs: "16px", lg: "18px" },
-                                                        },
-                                                    }}
-                                                />
+                                                <DatePicker
+                                                    selected={startDate}
+                                                    disabled
+                                                    className={styles.datee}
+                                                    minDate={Date.now()}
+                                                    maxDate={Date.now()} />
                                             </Grid>
                                             <Grid item xs={0.5}></Grid>
                                         </Grid>

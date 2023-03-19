@@ -62,8 +62,8 @@ const AddQuestions = (props: any) => {
                             }
                         >
                             <MenuItem disabled value="">--Select your question type--</MenuItem>
-                            <MenuItem value="DAD">Drag And Drop</MenuItem>
-                            <MenuItem value="OP">Options</MenuItem>
+                            <MenuItem value="DAD">Select Options</MenuItem>
+                            <MenuItem value="OP">MCQ</MenuItem>
                             <MenuItem value="FITB">Fill In The Blank</MenuItem>
                         </Select>
                         {((props.errors.type as unknown) as boolean) &&

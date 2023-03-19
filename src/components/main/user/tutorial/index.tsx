@@ -3,6 +3,8 @@ import React, { useEffect, useState } from 'react';
 import Footer from '../../footer';
 import UserAppbar from '../appbar';
 import router, { useRouter } from 'next/router';
+import MySubTopics from './subTopics';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
 
 /** Tutorial List + Tutorial Page */
 function UserTutorial() {
@@ -14,6 +16,9 @@ function UserTutorial() {
   const [myTutorial, setMyTutorial] = useState([] as any);
   const [isLoading, setIsLoading] = useState(true);
   const [httpError, setHttpError] = useState();
+  const [showSubs, setShowSubs] = useState(false);
+
+  const [myTopic, setMyTopic] = useState('');
 
   const id = router.query.id;
 
@@ -63,7 +68,11 @@ function UserTutorial() {
       setIsLoading(false);
       setHttpError(error.message)
     });
-  }, [myTutorial, thisTutorial]);
+  }, [myTopic, myTutorial, thisTutorial]);
+
+  const cancel = () => {
+    setShowSubs(false)
+  }
 
   return (
     <>
@@ -77,7 +86,7 @@ function UserTutorial() {
 
       }}>
         <UserAppbar />
-        {myTutorial?.map((tutorial: any) => {
+        {!showSubs && myTutorial?.map((tutorial: any) => {
           return (
             <div
               key={tutorial.id}
@@ -86,8 +95,9 @@ function UserTutorial() {
               {topics.map((topic: any) => {
                 return (
                   <div key={topic.id}>
-                    <h1 className={styles.tutorialtopic}  > {topic.title} </h1>
-                    {topic.subTopic?.map((subTopic: any) => {
+                    <h1 className={styles.tutorialtopic} onClick={() => { setShowSubs(true); setMyTopic(topic.id) }}> {topic.title} <AddCircleIcon sx={{ color: "green" }} /> </h1>
+                    {/* <button onClick={() => { setShowSubs(true); setMyTopic(topic.id) }} className={styles.changepass}>View Details</button> */}
+                    {/* {topic.subTopic?.map((subTopic: any) => {
                       console.log(subTopic)
                       return (
                         <div key={subTopic.id}>
@@ -99,7 +109,7 @@ function UserTutorial() {
                           </div>
                         </div>
                       )
-                    })}
+                    })} */}
                   </div>
                 )
               }
@@ -112,6 +122,13 @@ function UserTutorial() {
             </div>
           )
         })
+        }
+        {showSubs &&
+          <MySubTopics
+            myTutorial={myTutorial}
+            myTopic={myTopic}
+            cancel={cancel}
+          />
         }
         <Footer /></div>
 
