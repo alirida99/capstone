@@ -18,7 +18,7 @@ const AddEditUser = (props: any) => {
         familyName: addUserMode ? "" : userInfo.familyName,
         email: addUserMode ? "" : userInfo.email,
         password: addUserMode ? "" : userInfo.password,
-        confirmPassword: addUserMode ? "" : userInfo.confirmPassword,
+        confirmPassword: addUserMode ? "" : userInfo.password,
         age: addUserMode ? "" : userInfo.age,
         phoneNumber: addUserMode ? "" : userInfo.phoneNumber,
     };
@@ -129,7 +129,7 @@ const AddEditUser = (props: any) => {
                     initialValues={initialValues}
                     validationSchema={validationSchema}
                     onSubmit={addUserMode ? onSubmit : onEditSubmit}>
-                    {({ dirty, isValid, errors, touched, isSubmitting, setFieldValue, handleBlur, handleChange }) => {
+                    {({ dirty, isValid, errors, touched, isSubmitting, setFieldValue, handleBlur, handleChange, values }) => {
                         return (
                             <Form autoComplete="off">
                                 <Grid container>
@@ -140,7 +140,8 @@ const AddEditUser = (props: any) => {
                                                 label="First Name"
                                                 placeholder={'First Name'}
                                                 type="text"
-                                                defaultValue={addUserMode ? '' : userInfo.firstName}
+                                                value={values.firstName}
+                                                // defaultValue={addUserMode ? '' : userInfo.firstName}
                                                 error={
                                                     (errors.firstName as unknown as boolean) && (touched.firstName as unknown as boolean)
                                                 }
@@ -154,7 +155,8 @@ const AddEditUser = (props: any) => {
                                                 label="Family Name"
                                                 placeholder={'Family Name'}
                                                 type="text"
-                                                defaultValue={addUserMode ? '' : userInfo.familyName}
+                                                value={values.familyName}
+                                                // defaultValue={addUserMode ? '' : userInfo.familyName}
                                                 error={
                                                     (errors.familyName as unknown as boolean) && (touched.familyName as unknown as boolean)
                                                 }
@@ -168,7 +170,8 @@ const AddEditUser = (props: any) => {
                                             label="Email Address"
                                             placeholder={'Email'}
                                             type="text"
-                                            defaultValue={addUserMode ? '' : userInfo.email}
+                                            value={values.email}
+                                            // defaultValue={addUserMode ? '' : userInfo.email}
                                             error={
                                                 (errors.email as unknown as boolean) && (touched.email as unknown as boolean)
                                             }
@@ -182,7 +185,8 @@ const AddEditUser = (props: any) => {
                                                 label="Phone Number"
                                                 placeholder={'Phone Number'}
                                                 type="number"
-                                                defaultValue={addUserMode ? '' : userInfo.phoneNumber}
+                                                value={values.phoneNumber}
+                                                // defaultValue={addUserMode ? '' : userInfo.phoneNumber}
                                                 error={
                                                     (errors.phoneNumber as unknown as boolean) && (touched.phoneNumber as unknown as boolean)
                                                 }
@@ -196,7 +200,8 @@ const AddEditUser = (props: any) => {
                                                 label="Age"
                                                 placeholder={'Age'}
                                                 type="number"
-                                                defaultValue={addUserMode ? '' : userInfo.age}
+                                                value={values.age}
+                                                // defaultValue={addUserMode ? '' : userInfo.age}
                                                 error={
                                                     (errors.age as unknown as boolean) && (touched.age as unknown as boolean)
                                                 }
@@ -212,7 +217,8 @@ const AddEditUser = (props: any) => {
                                                 placeholder="Password"
                                                 type={showPassword ? "text" : "password"}
                                                 sx={{ width: '100%' }}
-                                                defaultValue={addUserMode ? '' : userInfo.password}
+                                                // defaultValue={addUserMode ? '' : userInfo.password}
+                                                value={values.password}
                                                 inputProps={{
                                                     endAdornment: (
                                                         <><InputAdornment position="end" sx={{ padding: '10px' }}>
@@ -245,7 +251,8 @@ const AddEditUser = (props: any) => {
                                                 placeholder="Confirm Password"
                                                 type={showConfirmPassword ? "text" : "password"}
                                                 sx={{ width: '100%' }}
-                                                defaultValue={addUserMode ? '' : userInfo.password}
+                                                // defaultValue={addUserMode ? '' : userInfo.password}
+                                                value={values.confirmPassword}
                                                 inputProps={{
                                                     endAdornment: (
                                                         <><InputAdornment position="end" sx={{ padding: '10px' }}>

@@ -144,7 +144,7 @@ function UsersExam() {
     var result = questions.filter(function (o1: any) {
       // filter out (!) items in result2
       return optionsValues.some(function (o2: any) {
-        return o1.id === o2.id && o1.trueAnswer === o2.value;          // assumes unique id
+        return o1.id === o2.id && o1.trueAnswer.toLowerCase() === o2.value;          // assumes unique id
       });
     });
     var result2 = questions.filter(function (o1: any) {
@@ -156,7 +156,7 @@ function UsersExam() {
     var result3 = questions.filter(function (o1: any) {
       // filter out (!) items in result2
       return dndValues.some(function (o2: any) {
-        return o1.id === o2.id && o1.trueAnswer === o2.value;          // assumes unique id
+        return o1.id === o2.id && o1.trueAnswer.toLowerCase() === o2.value.toLowerCase();          // assumes unique id
       });
     });
     setGrades(result.reduce((a: any, v: any) => a = a + parseInt(v.grade, 10), 0) + result2.reduce((a: any, v: any) => a = a + parseInt(v.grade, 10), 0) + result3.reduce((a: any, v: any) => a = a + parseInt(v.grade, 10), 0))
