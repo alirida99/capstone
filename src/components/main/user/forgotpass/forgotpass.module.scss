@@ -1,0 +1,70 @@
+.container {
+    width: 22cm;
+    height: max-content;
+    background-color: rgba(0, 0, 0, 0.85);
+    border-radius: 30px;
+    margin: 95px auto ;
+    padding: 40px;
+    text-align: center;
+  }
+  .newpassword{
+    text-align: center;
+    color: #fff;
+    font-weight: 100;
+    border-radius: 50px;
+    margin-top: 15px;
+    margin-bottom: 30px;
+  }
+  .back{
+    border-radius: 20px;
+    margin-right: 700px ;
+    color:#fff;
+    background-color: rgba(0, 0, 0, 0.01);
+    border: 2px solid #fff;
+  }
+  .back:hover {
+    background-color: #e7271a;
+    color: white;
+  }
+  .update{
+    background-color: #267326; 
+    border-radius: 8px;
+    color: white;
+    padding: 16px 32px;
+    text-align: center;
+    font-size: 14px;
+    font-size: medium;
+    opacity: 0.6;
+    border: none;
+    cursor: pointer;
+  }
+  .title{
+    text-align: center;
+    background-color: #288928; 
+    color: #fff;
+    font-weight: 400;
+    border-radius: 50px;
+    margin-top: 15px;
+    margin-bottom: 30px;
+}
+.update:hover {opacity: 1}
+.labels {
+    color: white;
+    font-size: 17px;
+    font-weight: bold;
+    display: block;
+    
+  }
+  .textfields {
+    background-color: rgba(0, 0, 0, 0.01);
+    color: whitesmoke;
+    font-weight: bold;
+    font-size: medium;
+    text-align: center;
+    padding: 3px 3px;
+    border-bottom: 2px solid #267326;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    
+  }
