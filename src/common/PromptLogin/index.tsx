@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Box, Button, Divider, Grid, IconButton, InputAdornment, Modal, Typography } from '@mui/material';
 import Link from 'next/link';
 import styles from './promptLogin.module.scss';
@@ -13,6 +13,7 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import FormikField from '../../components/general/Layouts/TextField/FormikField';
 import { useAuth } from '../../../context/AuthContext';
+import AppContext from '@/components/AppContext/AppContext';
 
 interface FormValues {
     email: string;
@@ -54,6 +55,19 @@ const PromptLogin: React.FC<LoginComponentProps> = ({ open, title, handleClose }
     const [users, setUsers] = useState([] as any);
     const [isLoading, setIsLoading] = useState(true);
     const [httpError, setHttpError] = useState("");
+    const context = useContext(AppContext)
+
+    async function currentUser(user: any) {
+        const response = await fetch('https://capstone-final-adf33-default-rtdb.firebaseio.com/currentUser.json', {
+            method: 'POST',
+            body: JSON.stringify(user),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        const data = await response.json();
+        console.log(data);
+    }
 
     useEffect(() => {
         const fetchUsers = async () => {
@@ -84,40 +98,36 @@ const PromptLogin: React.FC<LoginComponentProps> = ({ open, title, handleClose }
     }, []);
 
     const handleLogin = async (values: FormValues) => {
-        // const { email, password } = values;
-        // console.log(user)
-
-        // try {
-        //     await loginUsers
-        //     router.push('/home')
-        // } catch (err) {
-        //     console.log(err)
-        // }
+        const { email, password } = values;
         const enteredUser = {
             email: values.email,
             password: values.password,
         }
-        const email = users.map((user: any) => {
+        const emaill = users.map((user: any) => {
             return (
                 `${user.email}`
             )
         });
-        const password = users.map((user: any) => {
+        const passwordd = users.map((user: any) => {
             return (
                 `${user.password}`
             )
         });
-        // if (email.includes(enteredUser.email) && password.includes(enteredUser.password)) {
-        //     await loginUsers
-        //     router.push('/home')
-        // }
-        // console.log(enteredUser)
-        // console.log(email)
-        // console.log(password)
         try {
-            if (email.includes(enteredUser.email) && password.includes(enteredUser.password)) {
+            if (emaill.includes(enteredUser.email) && passwordd.includes(enteredUser.password)) {
+                context.setSession(enteredUser.email)
                 await loginUsers
-                router.push('/home')
+                const user = {
+                    userEmail: enteredUser.email
+                }
+                currentUser(user);
+                router.push({
+                    pathname: '/user/userHome',
+                    query: { email: enteredUser.email }
+                })
+            } else if (await login(email, password)) {
+                router.push('/admins/adminsHome')
+                setHttpError("")
             } else {
                 setHttpError("Incorrect Email OR Password")
             }

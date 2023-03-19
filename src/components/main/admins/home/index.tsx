@@ -19,8 +19,6 @@ import BookIcon from "@mui/icons-material/Book";
 import QuizIcon from '@mui/icons-material/Quiz';
 import LogoutIcon from '@mui/icons-material/Logout';
 import Image from "next/image";
-import ExercisesForm from "../exercises";
-import TutorialsComponent from "../tutorials";
 
 const AdminsHomeComponent = () => {
     const { user, logout } = useAuth();

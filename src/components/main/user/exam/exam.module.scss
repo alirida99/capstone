@@ -161,19 +161,17 @@
     position: fixed;
     left: 25%;
     top: 30%;
-text-align: center;
+    text-align: center;
     width: 50%;
     height: fit-content;
     border: 1px solid #267326;
     border-radius: 1em;
     box-shadow: -2px 5px 5px#50ce50;
     background-color: #FDFFFC;
-    
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
-    
     color: #011627;
 }
 

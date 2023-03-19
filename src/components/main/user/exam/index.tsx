@@ -150,7 +150,7 @@ function UsersExam() {
     var result2 = questions.filter(function (o1: any) {
       // filter out (!) items in result2
       return fitbValues.some(function (o2: any) {
-        return o1.id === o2.id && o1.trueAnswer === o2.value;          // assumes unique id
+        return o1.id === o2.id && o1.trueAnswer.toLowerCase() === o2.value;          // assumes unique id
       });
     });
     var result3 = questions.filter(function (o1: any) {
@@ -272,9 +272,9 @@ function UsersExam() {
                                         onChange={handleChange}
                                         onBlur={(e: any) => {
                                           if (!specificOption) {
-                                            setOptionsValues((current: any) => [...current, { id: question.id, value: e.target.value }])
+                                            setOptionsValues((current: any) => [...current, { id: question.id, value: e.target.value.toLowerCase() }])
                                           } else {
-                                            specificOption.value = e.target.value
+                                            specificOption.value = e.target.value.toLowerCase()
                                           }
                                         }}
                                       >
@@ -344,10 +344,9 @@ function UsersExam() {
                                         <span className={styles.questionstatement}>{question.sentence1}</span>
                                       </Grid>
                                       <Grid item xs={0.2}></Grid>
-                                      <Grid item xs={5.4}>
+                                      <Grid item xs={4}>
                                         <TextField
                                           id="standard-basic"
-                                          // label="Standard"
                                           onChange={handleChange}
                                           onBlur={(e: any) => {
                                             if (!specificFITB) {
@@ -366,42 +365,6 @@ function UsersExam() {
                                           autoComplete='off'
                                           className={styles.FITB}
                                           variant="standard" />
-                                        {/* <FormikField
-                                          name="fillIn"
-                                          placeholder={"Fill In The Blank!"}
-                                          // defaultValue={addExamMode ? '' : tutorialInfo.noq}
-                                          // value={values.firstName}
-                                          type="text"
-                                          sx={{
-                                            // marginTop: "20px",
-                                            color: 'white',
-                                            width: '300px',
-                                            "& .css-0": {
-                                              display: 'inline'
-                                            },
-                                            "& .MuiOutlinedInput-root": {
-                                              height: { xs: "44px", lg: "34px" },
-                                              padding: {
-                                                xs: "10px 0 10px 0",
-                                                lg: "20px 0 20px 0",
-                                              },
-                                              borderRadius: { xs: "8px", lg: "10px" },
-                                              color: 'white',
-                                              fontSize: { xs: "16px", lg: "18px" },
-                                            },
-                                            "& .MuiOutlinedInput-input": {
-                                              textAlign: 'center',
-                                            },
-                                            "& .css-1d3z3hw-MuiOutlinedInput-notchedOutline": {
-                                              border: 'none',
-                                              borderBottom: '1px solid white',
-                                            },
-                                            "& .css-1d3z3hw-MuiOutlinedInput-notchedOutline: hover": {
-                                              border: 'none',
-                                              borderBottom: '1px solid green'
-                                            },
-                                          }}
-                                        /> */}
                                       </Grid>
                                       <Grid item xs={0.2}></Grid>
                                       <Grid item>
@@ -452,7 +415,7 @@ const PopUp = (props: any) => {
     || percentage < 60 && 'You must study harder!'
 
   return (
-    <div className={styles.PopUp} style={{ filter: 'none !important' }} >
+    <div className={styles.PopUp} style={{ filter: 'none !important' }}>
       <div className={styles.pucontentcontainer}>
         <h1>Result:</h1>
         <h1> {props.grades} of {props.finalGrade}</h1> {/**correct answers/total questions */}

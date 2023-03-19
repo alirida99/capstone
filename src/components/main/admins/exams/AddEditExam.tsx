@@ -15,6 +15,7 @@ const AddEditExam = (props: any) => {
     const [isLoading, setIsLoading] = useState(true);
     const [httpError, setHttpError] = useState();
     const [showAddQuestions, setAddQuestions] = useState(false);
+    const [index, setIndex] = useState("")
 
     useEffect(() => {
         const fetchTutorials = async () => {
@@ -72,11 +73,11 @@ const AddEditExam = (props: any) => {
         noq: addExamMode ? "" : examInfo.noq,
         time: addExamMode ? "" : examInfo.time,
         qType: addExamMode ? "" : "",
-        qSentence1: addExamMode ? "" : "a",
-        qSentence2: addExamMode ? "" : "aa",
-        qTrueAnswer: addExamMode ? "" : "aaa",
-        qOptions: addExamMode ? [] : ['aaa', 'assd'],
-        qGrade: addExamMode ? "" : "22",
+        qSentence1: addExamMode ? "" : "",
+        qSentence2: addExamMode ? "" : "",
+        qTrueAnswer: addExamMode ? "" : "",
+        qOptions: addExamMode ? [] : [],
+        qGrade: addExamMode ? "" : "",
     };
     const validationSchema = Yup.object().shape({
         type: Yup.string()
@@ -374,6 +375,7 @@ const AddEditExam = (props: any) => {
                                                 {!addExamMode &&
                                                     <Grid>
                                                         {questions && questions.map((question: any, i: any) => {
+                                                            setIndex(i + 1)
                                                             return (
                                                                 <Grid key={question.id}>
                                                                     <AddQuestions
@@ -396,12 +398,14 @@ const AddEditExam = (props: any) => {
                                                         }
                                                             // }
                                                         )}
-                                                        <Grid className={styles.submitting}>
-                                                            <button className={styles.btnSave}
-                                                                onClick={() => setAddQuestions(true)}>
-                                                                Add Question
-                                                            </button>
-                                                        </Grid>
+                                                        {index < values.noq &&
+                                                            <Grid className={styles.submitting}>
+                                                                <button className={styles.btnSave}
+                                                                    onClick={() => setAddQuestions(true)}>
+                                                                    Add Question
+                                                                </button>
+                                                            </Grid>
+                                                        }
                                                     </Grid>
                                                 }
                                             </Grid>
