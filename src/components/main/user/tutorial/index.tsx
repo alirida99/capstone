@@ -76,14 +76,13 @@ function UserTutorial() {
 
   return (
     <>
-
       <div style={{
         backgroundImage: "url(/background.jpg)",
         backgroundSize: 'cover',
         backgroundRepeat: 'no-repeat',
         backgroundAttachment: 'fixed',
         backgroundPosition: 'center',
-
+        filter: popUp ? 'blur(4px)' : 'none',
       }}>
         <UserAppbar />
         {!showSubs && myTutorial?.map((tutorial: any) => {
@@ -96,29 +95,12 @@ function UserTutorial() {
                 return (
                   <div key={topic.id}>
                     <h1 className={styles.tutorialtopic} onClick={() => { setShowSubs(true); setMyTopic(topic.id) }}> {topic.title} <AddCircleIcon sx={{ color: "green" }} /> </h1>
-                    {/* <button onClick={() => { setShowSubs(true); setMyTopic(topic.id) }} className={styles.changepass}>View Details</button> */}
-                    {/* {topic.subTopic?.map((subTopic: any) => {
-                      console.log(subTopic)
-                      return (
-                        <div key={subTopic.id}>
-                          <h2 className={styles.subtopic} >{subTopic.title}</h2>
-                          <p className={styles.description}>{subTopic.description}</p>
-                          <div className={styles.examplecontainer}>
-                            <h1 className={styles.eg}>example:</h1>
-                            <p className={styles.eg2}>{subTopic.example}</p>
-                          </div>
-                        </div>
-                      )
-                    })} */}
                   </div>
                 )
               }
               )}
               <br /><br />
               <button onClick={() => setPopUp(true)} className={styles.takeexam}> Take Exam </button> {/**Pop up box : Are you sure yu want to start this exam? */}
-              {popUp && <PopUp setPopUp={() => setPopUp(false)} tutorialTitle={myTutorial.map((myT: any) => {
-                return (myT.title)
-              })} />}
             </div>
           )
         })
@@ -130,7 +112,11 @@ function UserTutorial() {
             cancel={cancel}
           />
         }
-        <Footer /></div>
+      </div>
+      {popUp && <PopUp setPopUp={() => setPopUp(false)} tutorialTitle={myTutorial.map((myT: any) => {
+        return (myT.title)
+      })} />}
+      <Footer />
 
     </>
   );
@@ -145,7 +131,7 @@ const PopUp = (props: any) => {
   const router = useRouter();
 
   return (
-    <div className={styles.PopUp} >
+    <div className={styles.PopUp} style={{ filter: 'none !important' }}>
       {/* x close window */}
       <button className={styles.popupx} onClick={setPopUp} >X</button>
       <div className={styles.pucontentcontainertut}>

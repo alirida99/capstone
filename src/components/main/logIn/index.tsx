@@ -27,10 +27,6 @@ const LoginComponent: React.FC<LoginComponentProps> = () => {
     const context = useContext(AppContext)
 
     const [showPassword, setShowPassword] = useState(false);
-    // const [data, setData] = useState({
-    //     email: '',
-    //     password: '',
-    // })
 
     const [users, setUsers] = useState([] as any);
     const [isLoading, setIsLoading] = useState(true);
@@ -77,16 +73,6 @@ const LoginComponent: React.FC<LoginComponentProps> = () => {
     }, []);
 
     const handleLogin = async (values: FormValues) => {
-        // const { email, password } = values;
-        // // e.preventDefault();
-        // console.log(user)
-
-        // try {
-        //     await login(email, password)
-        //     router.push('/home')
-        // } catch (err) {
-        //     console.log(err)
-        // }
         const enteredUser = {
             email: values.email,
             password: values.password,
@@ -163,7 +149,6 @@ const LoginComponent: React.FC<LoginComponentProps> = () => {
                     }
                     <Formik
                         validationSchema={LoginSchema}
-                        //   validateOnBlur={false}
                         validateOnChange
                         onSubmit={handleLogin}
                         initialValues={{
@@ -178,13 +163,6 @@ const LoginComponent: React.FC<LoginComponentProps> = () => {
                                         <Grid container>
                                             <Grid item xs={12} style={{ textAlign: 'left', marginBottom: '50px' }}>
                                                 <FormikField
-                                                    // onChange={(e: any) => {
-                                                    //     setData({
-                                                    //         ...data,
-                                                    //         email: e.target.value,
-                                                    //     })
-                                                    // }}
-                                                    // value={data.email}
                                                     name="email"
                                                     label="Email Address"
                                                     placeholder={'Email'}
@@ -197,13 +175,6 @@ const LoginComponent: React.FC<LoginComponentProps> = () => {
                                             </Grid>
                                             <Grid item xs={12} style={{ textAlign: 'left', marginBottom: '50px' }}>
                                                 <FormikField
-                                                    // onChange={(e: any) => {
-                                                    //     setData({
-                                                    //         ...data,
-                                                    //         password: e.target.value,
-                                                    //     })
-                                                    // }}
-                                                    // value={data.password}
                                                     name="password"
                                                     label="Password"
                                                     placeholder="Password"
@@ -216,7 +187,6 @@ const LoginComponent: React.FC<LoginComponentProps> = () => {
                                                                     style={{ marginRight: '5px' }}
                                                                     aria-label="toggle password visibility"
                                                                     onClick={handleClickShowPassword}
-                                                                    // onMouseDown={handleMouseDownPassword}
                                                                     edge="end"
                                                                 >
                                                                     {showPassword ?
@@ -237,7 +207,6 @@ const LoginComponent: React.FC<LoginComponentProps> = () => {
                                                 <Grid item xs={6}>
                                                     <LoadingButton
                                                         type="submit"
-                                                        // loading={loading}
                                                         disabled={!dirty || !isValid}
                                                         sx={{ textTransform: 'capitalize', width: '200px', height: '55px', fontSize: '18px !important', fontWeight: 'normal' }}
                                                         variant="contained">
@@ -247,7 +216,7 @@ const LoginComponent: React.FC<LoginComponentProps> = () => {
                                             </Grid>
                                             <Grid container mt={5}>
                                                 <Grid item xs>
-                                                    <Link onClick={() => { router.push('/user/ForgotPass') }} variant="body2" style={{ fontSize: '18px' }}>
+                                                    <Link onClick={() => { router.push('/user/ForgotPass') }} variant="body2" style={{ fontSize: '18px', cursor: 'pointer' }}>
                                                         Forgot password?
                                                     </Link>
                                                 </Grid>

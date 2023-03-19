@@ -6,6 +6,7 @@ import FormikField from "../../../general/Layouts/TextField/FormikField";
 
 const AddQuestions = (props: any) => {
     const [value, setValue] = useState("");
+    const [FITB, setFITB] = useState(false);
 
     return (
         <Box>
@@ -61,10 +62,10 @@ const AddQuestions = (props: any) => {
                                 ((props.touched.qType as unknown) as boolean)
                             }
                         >
-                            <MenuItem disabled value="">--Select your question type--</MenuItem>
-                            <MenuItem value="DAD">Select Options</MenuItem>
-                            <MenuItem value="OP">MCQ</MenuItem>
-                            <MenuItem value="FITB">Fill In The Blank</MenuItem>
+                            <MenuItem disabled value="" onClick={() => setFITB(false)}>--Select your question type--</MenuItem>
+                            <MenuItem value="DAD" onClick={() => setFITB(false)}>Select Options</MenuItem>
+                            <MenuItem value="OP" onClick={() => setFITB(false)}>MCQ</MenuItem>
+                            <MenuItem value="FITB" onClick={() => setFITB(true)}>Fill In The Blank</MenuItem>
                         </Select>
                         {((props.errors.type as unknown) as boolean) &&
                             ((props.touched.type as unknown) as boolean) ? (
@@ -234,79 +235,82 @@ const AddQuestions = (props: any) => {
                     </Grid>
                     <Grid item xs={0.5}></Grid>
                 </Grid>
-                <Grid container sx={{ marginTop: "50px" }}>
-                    <Autocomplete
-                        id="tags-outlined"
-                        className={styles.qOptionsFieldInput}
-                        multiple
-                        options={[]}
-                        freeSolo
-                        // value={props.values.qOptions}
-                        defaultValue={!props.addExamMode && !props.showAddQuestions ? props.question.options : ""}
-                        onChange={(e, value) => {
-                            props.setFieldValue("qOptions", value);
-                        }}
-                        onBlur={props.handleBlur}
-                        sx={{
-                            width: '100%',
-                            '& .MuiFilledInput-root:after': {
-                                borderBottom: 0,
-                            },
-                        }}
-                        inputValue={value}
-                        onInputChange={(event, newInputValue) => {
-                            const options: string[] = newInputValue.split(",");
-                            const spaceOptions: string[] = newInputValue.split(" ");
+                {!FITB &&
+                    <Grid container sx={{ marginTop: "50px" }}>
+                        <Autocomplete
+                            id="tags-outlined"
+                            className={styles.qOptionsFieldInput}
+                            multiple
+                            options={[]}
+                            freeSolo
+                            defaultValue={!props.addExamMode && !props.showAddQuestions ? props.question.options : ""}
+                            onChange={(e, value) => {
+                                props.setFieldValue("qOptions", value);
+                            }}
+                            onBlur={props.handleBlur}
+                            sx={{
+                                width: '100%',
+                                '& .MuiFilledInput-root:after': {
+                                    borderBottom: 0,
+                                },
+                            }}
+                            inputValue={value}
+                            onInputChange={(event, newInputValue) => {
+                                const options: string[] = newInputValue.split(",");
+                                const spaceOptions: string[] = newInputValue.split(" ");
 
-                            if (options.length > 1) {
-                                setValue('');
-                                props.setFieldValue("qOptions", (props.values.qOptions as string[]).concat(options)
-                                    .map(x => x.trim())
-                                    .filter(x => x))
-                            } else if (spaceOptions.length > 1) {
-                                setValue('');
-                                props.setFieldValue("qOptions", (props.values.qOptions as string[]).concat(spaceOptions)
-                                    .map(x => x.trim())
-                                    .filter(x => x))
-                            } else {
-                                setValue(newInputValue);
-                            }
-                            console.log(props.values.qOptions)
-                        }}
-                        renderInput={params => {
-                            return (
-                                <>
-                                    <TextField
-                                        {...params}
-                                        className={styles.inputInvite}
-                                        variant="filled"
-                                        placeholder={"Options"}
-                                        inputProps={{
-                                            ...params.inputProps
-                                        }}
-                                        sx={{
-                                            // backgroundColor: "#fbe3e3",
-                                            '& .MuiFilledInput-root': {
-                                                padding: { lg: '10px', xs: '6px 8px' },
-                                                // backgroundColor: props.errors.qOptions ? '#fbe3e3' : '',
-                                                // color: props.errors.qOptions ? '#c41a1a' : '',
-                                            }
-                                        }}
-                                    />
-                                    {((props.errors.qOptions as unknown) as boolean) &&
-                                        ((props.touched.qOptions as unknown) as boolean) ? (
-                                        <ErrorMessage name={"qOptions"}>
-                                            {(msg) => (
-                                                <div className={styles.errorStyle}>{msg}</div>
-                                            )}
-                                        </ErrorMessage>
-                                    ) : null}
-                                </>
-                            );
-                        }}
+                                if (options.length > 1) {
+                                    setValue('');
+                                    props.setFieldValue("qOptions", (props.values.qOptions as string[]).concat(options)
+                                        .map(x => x.trim())
+                                        .filter(x => x))
+                                }
+                                // else if (spaceOptions.length > 1) {
+                                //     setValue('');
+                                //     props.setFieldValue("qOptions", (props.values.qOptions as string[]).concat(spaceOptions)
+                                //         .map(x => x.trim())
+                                //         .filter(x => x))
+                                // } 
+                                else {
+                                    setValue(newInputValue);
+                                }
+                                console.log(props.values.qOptions)
+                            }}
+                            renderInput={params => {
+                                return (
+                                    <>
+                                        <TextField
+                                            {...params}
+                                            className={styles.inputInvite}
+                                            variant="filled"
+                                            placeholder={"Options"}
+                                            inputProps={{
+                                                ...params.inputProps
+                                            }}
+                                            sx={{
+                                                // backgroundColor: "#fbe3e3",
+                                                '& .MuiFilledInput-root': {
+                                                    padding: { lg: '10px', xs: '6px 8px' },
+                                                    // backgroundColor: props.errors.qOptions ? '#fbe3e3' : '',
+                                                    // color: props.errors.qOptions ? '#c41a1a' : '',
+                                                }
+                                            }}
+                                        />
+                                        {((props.errors.qOptions as unknown) as boolean) &&
+                                            ((props.touched.qOptions as unknown) as boolean) ? (
+                                            <ErrorMessage name={"qOptions"}>
+                                                {(msg) => (
+                                                    <div className={styles.errorStyle}>{msg}</div>
+                                                )}
+                                            </ErrorMessage>
+                                        ) : null}
+                                    </>
+                                );
+                            }}
 
-                    />
-                </Grid>
+                        />
+                    </Grid>
+                }
             </Grid>
         </Box>
     )
