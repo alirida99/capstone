@@ -16,18 +16,22 @@ const TutorialsComponent = (props: any) => {
     const [addTutorialShow, setAddTutorialShow] = useState(false);
     const [addTutorialMode, setAddTutorialMode] = useState(false);
     const [tutorialInfo, setTutorialInfo] = useState([] as any);
+    const [exams, setExams] = useState([] as any);
 
     useEffect(() => {
         const fetchTutorials = async () => {
             const response = await fetch('https://capstone-final-adf33-default-rtdb.firebaseio.com/tutorials.json');
+            const responseExams = await fetch('https://capstone-final-adf33-default-rtdb.firebaseio.com/exams.json');
 
-            if (!response.ok) {
+            if (!response.ok || !responseExams.ok) {
                 throw new Error('Something went wrong!!')
             }
 
             const responseData = await response.json();
+            const responseExamsData = await responseExams.json();
 
             const loadedTutorials = [];
+            const loadedExams = [];
 
             for (const key in responseData) {
                 loadedTutorials.push({
@@ -39,7 +43,18 @@ const TutorialsComponent = (props: any) => {
                 });
             }
 
+            for (const key in responseExamsData) {
+                loadedExams.push({
+                    id: key,
+                    type: responseExamsData[key].type,
+                    numberOfQuestions: responseExamsData[key].noq,
+                    time: responseExamsData[key].time,
+                    questions: responseExamsData[key].questions,
+                });
+            }
+
             setTutorials(loadedTutorials);
+            setExams(loadedExams);
             setIsLoading(false);
         }
         fetchTutorials().catch((error) => {
@@ -75,12 +90,22 @@ const TutorialsComponent = (props: any) => {
         setAddTutorialShow(false);
     }
 
-    const deletingTutorials = (tutorialId: any) => {
-        fetch(`https://capstone-final-adf33-default-rtdb.firebaseio.com/tutorials/${tutorialId}.json`, {
+    const deletingTutorials = (tutorialInfo: any) => {
+        fetch(`https://capstone-final-adf33-default-rtdb.firebaseio.com/tutorials/${tutorialInfo.id}.json`, {
             method: 'DELETE',
         }).then(response => {
             setTutorials((prevTutorials: any) =>
-                prevTutorials.filter((tutorial: any) => tutorial.id !== tutorialId)
+                prevTutorials.filter((tutorial: any) => tutorial.id !== tutorialInfo.id)
+            )
+        });
+        const thisExam = exams.filter((exam: any) => {
+            return `${exam.type}`.toLowerCase() === `${tutorialInfo.title}`.toLowerCase();
+        });
+        fetch(`https://capstone-final-adf33-default-rtdb.firebaseio.com/exams/${thisExam.map((exam: any) => exam.id)}.json`, {
+            method: 'DELETE',
+        }).then(response => {
+            setExams((prevExams: any) =>
+                prevExams.filter((exam: any) => exam.id !== thisExam.map((exam: any) => exam.id))
             )
         });
     }

@@ -183,6 +183,8 @@ const AddEditExam = (props: any) => {
         });
     }
 
+    const filtered = tutorials.filter((tutorial: any) => !props.exams.some((exam: any) => exam.type === tutorial.title))
+
     return (
         <Box>
             <Grid container>
@@ -242,11 +244,22 @@ const AddEditExam = (props: any) => {
                                                             }
                                                         >
                                                             <MenuItem disabled value="">--Select your exam type--</MenuItem>
-                                                            {tutorials.map((tutorial: any) => (
-                                                                <MenuItem key={tutorial.title} value={tutorial.title}>
-                                                                    {tutorial.title}
-                                                                </MenuItem>
-                                                            ))}
+                                                            {addExamMode && filtered.map((tutorial: any) => {
+                                                                return (
+                                                                    <MenuItem key={tutorial.title} value={tutorial.title}>
+                                                                        {tutorial.title}
+                                                                    </MenuItem>
+                                                                )
+                                                            }
+                                                            )}
+                                                            {!addExamMode && tutorials.map((tutorial: any) => {
+                                                                return (
+                                                                    <MenuItem key={tutorial.title} value={tutorial.title}>
+                                                                        {tutorial.title}
+                                                                    </MenuItem>
+                                                                )
+                                                            }
+                                                            )}
                                                         </Select>
                                                         {((errors.type as unknown) as boolean) &&
                                                             ((touched.type as unknown) as boolean) ? (

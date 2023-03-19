@@ -160,6 +160,7 @@ const ExamsComponent = () => {
                     onEdit={editExamsHandler}
                     examsInfo={examsInfo}
                     cancel={cancel}
+                    exams={exams}
                 />
             }
         </>

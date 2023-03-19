@@ -18,7 +18,7 @@ const TutorialList = (props: any) => {
             <td style={{ width: '25%' }}>{props.creatingDate}</td>
             <td style={{ whiteSpace: 'nowrap', width: '25%' }}>
                 <button className={styles.btnSave} onClick={props.edit.bind(this, tutorialInfo)}>Edit</button>
-                <button className={styles.btnCancel} onClick={props.onRemoveItem.bind(this, props.id)}>
+                <button className={styles.btnCancel} onClick={props.onRemoveItem.bind(this, tutorialInfo)}>
                     Delete
                 </button>
             </td>
